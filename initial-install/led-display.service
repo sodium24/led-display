@@ -1,0 +1,10 @@
+[Unit]
+Description=LED Matrix Display
+After=network.target
+
+[Service]
+ExecStart=/home/pi/led-sign-startup.sh
+
+[Install]
+WantedBy=multi-user.target
+

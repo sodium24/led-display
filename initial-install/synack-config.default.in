@@ -1,0 +1,67 @@
+{
+    "display": {
+        "ledRows": 32,
+        "ledCols": 64,
+        "ledChain": 2,
+        "ledParallel": 1,
+        "ledPwmBits": 11,
+        "ledBrightness": 100,
+        "ledScanMode": 1,
+        "ledPwmLsbNanoseconds": 130,
+        "ledShowRefresh": false,
+        "ledRgbSequence": "RGB",
+        "ledPixelMapper": "U-mapper",
+        "ledRowAddrType": 0,
+        "ledMultiplexing": 0
+    },
+    "settings": {
+    },
+    "fonts": {
+        "6x9": {
+            "path": "/home/pi/led-display/fonts/6x9.bdf",
+            "outline": false
+        },
+        "7x13": {
+            "path": "/home/pi/led-display/fonts/7x13.bdf",
+            "outline": false
+        }
+    },
+    "screens": {
+        "off": {
+            "app": "off"
+        },
+        "synackDisplay": {
+            "app": "imageDisplay",
+            "config": {
+                "display": [
+                    {
+                        "type": "image",
+                        "filename": "images/srt_64.png",
+                        "rect": [0, 0, 64, 64]
+                    },
+                    {
+                        "type": "text",
+                        "text": "{ALIAS}",
+                        "point": [32, 7],
+                        "font": "6x9",
+                        "color": [255, 255, 255],
+                        "scroll": "auto",
+                        "align": "center",
+                        "enable": {SHOW_ALIAS}
+                    },
+                    {
+                        "type": "datetime",
+                        "format": "%H:%M:%S",
+                        "point": [32, 63],
+                        "font": "6x9",
+                        "color": [255, 255, 255],
+                        "scroll": "none",
+                        "align": "center",
+                        "enable": {SHOW_TIME}
+                    }
+                ]
+            }
+        }
+    },
+    "screenOrder": ["synackDisplay", "off"]
+}
