@@ -2,6 +2,7 @@ import argparse
 import time
 import sys
 import os
+import appcontrols
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
 
@@ -11,6 +12,12 @@ class AppBase(object):
         self.app_config = app_config
         self.loaded_fonts = loaded_fonts
         self.stopFlag = False
+        self.controls = {}
+        self.control_classes = {
+            "text": appcontrols.TextControl,
+            "image": appcontrols.ImageControl,
+        }
+        self.next_z_index = 0
 
     def load_font(self, font_name):
         if font_name not in self.loaded_fonts:
@@ -20,11 +27,21 @@ class AppBase(object):
                 self.loaded_fonts[font_name] = self.loaded_fonts[font_name].CreateOutlineFont()
         return self.loaded_fonts[font_name]
 
-    def get_text_width(self, text, font):
-        width = 0
-        for character in text:
-            width += font.CharacterWidth(ord(character))
-        return width
+    def create_control(self, control_type, control_id):
+        self.controls[control_id] = self.control_classes[control_type](control_id, self)
+        self.controls[control_id].z_index = self.next_z_index
+        self.next_z_index += 1
+        return self.controls[control_id]
+
+    def update(self):
+        sorted_controls = sorted(self.controls.items(), key=lambda kv: kv[1].z_index)
+        for control in sorted_controls:
+            control[1].on_frame()
+            control[1].draw(self.offscreen_canvas)
+
+    def draw(self):
+        self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
+        self.offscreen_canvas.Clear()
 
     def run(self):
         return
@@ -57,6 +74,8 @@ class AppBase(object):
             options.disable_hardware_pulsing = self.config["display"]["ledNoHardwarePulse"]
 
         self.matrix = RGBMatrix(options = options)
+        self.offscreen_canvas = self.matrix.CreateFrameCanvas()
+        self.offscreen_canvas.Clear()
 
         self.run()
 
