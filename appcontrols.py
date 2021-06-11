@@ -7,6 +7,10 @@ class Control(object):
         self.control_id = control_id
         self.app_base = weakref.ref(app_base)
         self.z_index = 0
+        self.enabled = True
+
+    def delete(self):
+        self.app_base()._delete_control(self.control_id)
 
     def get_static(self):
         return True

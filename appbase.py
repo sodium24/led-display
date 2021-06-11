@@ -33,11 +33,16 @@ class AppBase(object):
         self.next_z_index += 1
         return self.controls[control_id]
 
+    def _delete_control(control_id):
+        if control_id in self.controls:
+            del self.controls[control_id]
+
     def update(self):
         sorted_controls = sorted(self.controls.items(), key=lambda kv: kv[1].z_index)
         for control in sorted_controls:
-            control[1].on_frame()
-            control[1].draw(self.offscreen_canvas)
+            if control[1].enabled:
+                control[1].on_frame()
+                control[1].draw(self.offscreen_canvas)
 
     def draw(self):
         self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
