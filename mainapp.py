@@ -3,23 +3,56 @@ import sys
 import json
 import threading
 import time
+import appbase
+import controllerserver
 
-class MainApp(object):
+class MainApp(appbase.AppBase):
     def __init__(self, config):
-        self.config = config
-        self.screen_index = 0
         self.loaded_fonts = {}
+        super(MainApp, self).__init__(config, config, self.loaded_fonts)
+
+        self.config = config
+        self.current_screen_index = -1
+        self.screen_index = 0
         self.running = False
         self.current_app = None
+        self.controller = controllerserver.ControllerServer(self)
+        self.controller.start()
 
-    def start_app(self):
+    def on_input_event(self, input_event):
+        handled = False
+
+        if not handled and self.current_app is not None:
+            handled = self.current_app.on_input_event(input_event)
+
+        if not handled:
+            if input_event == "right":
+                self.screen_index += 1
+                self.screen_index %= len(self.config["screenOrder"])
+                if self.current_app is not None:
+                    self.current_app.stop()
+                handled = True
+            elif input_event == "left":
+                self.screen_index -= 1
+                self.screen_index %= len(self.config["screenOrder"])
+                if self.current_app is not None:
+                    self.current_app.stop()
+                handled = True
+
+        return handled
+
+    def start_app(self, index):
+        self.current_screen_index = self.screen_index = index
         screen_name = self.config["screenOrder"][self.screen_index]
         screen_app = self.config["screens"][screen_name]
         screen_class = addons.apps[screen_app["app"]]
-        app_config = screen_app["config"]
-        self.current_app = screen_class(self.config, app_config, self.loaded_fonts)
+        app_config = screen_app.get("config", {})
+        self.current_app = screen_class(self.config, app_config, self.loaded_fonts, self.matrix)
         self.running = True
+        print("Starting app for screen " + screen_name)
+        print("Press CTRL-C to stop...")
         self.current_app.start()
+        print("Execution complete")
         self.running = False
 
     def wait_for_complete(self):
@@ -28,15 +61,14 @@ class MainApp(object):
             time.sleep(1)
 
     def run(self):
-        self.start_app()
-
-        try:
-            print("Press CTRL-C to stop sample")
-            while True:
+        while True:
+            if self.current_screen_index != self.screen_index:
+                try:
+                    self.start_app(self.screen_index)
+                except Exception as err:
+                    print("Exception while running app: %s" % err)
+            else:
                 time.sleep(1)
-        except KeyboardInterrupt:
-            print("Exiting\n")
-            self.wait_for_complete()
 
 def main():
     if len(sys.argv) < 2:
@@ -47,7 +79,7 @@ def main():
         json_config = json.loads(json_file.read())
 
     main_app = MainApp(json_config)
-    main_app.run()
+    main_app.start()
 
 if __name__ == "__main__":
     main()

@@ -7,7 +7,7 @@ from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
 
 class AppBase(object):
-    def __init__(self, config, app_config, loaded_fonts):
+    def __init__(self, config, app_config, loaded_fonts, matrix=None):
         self.config = config
         self.app_config = app_config
         self.loaded_fonts = loaded_fonts
@@ -17,6 +17,7 @@ class AppBase(object):
             "text": appcontrols.TextControl,
             "image": appcontrols.ImageControl,
         }
+        self.matrix = matrix
         self.next_z_index = 0
 
     def load_font(self, font_name):
@@ -48,6 +49,9 @@ class AppBase(object):
         self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
         self.offscreen_canvas.Clear()
 
+    def on_input_event(self, input_event):
+        return False
+
     def run(self):
         return
 
@@ -55,30 +59,32 @@ class AppBase(object):
         self.stopFlag = True
 
     def start(self):
-        options = RGBMatrixOptions()
+        if self.matrix is None:
+            options = RGBMatrixOptions()
 
-        if self.config["display"].get("ledGpioMapping") != None:
-            options.hardware_mapping = self.config["display"]["ledGpioMapping"]
-        options.rows = self.config["display"]["ledRows"]
-        options.cols = self.config["display"]["ledCols"]
-        options.chain_length = self.config["display"]["ledChain"]
-        options.parallel = self.config["display"]["ledParallel"]
-        options.row_address_type = self.config["display"]["ledRowAddrType"]
-        options.multiplexing = self.config["display"]["ledMultiplexing"]
-        options.pwm_bits = self.config["display"]["ledPwmBits"]
-        options.brightness = self.config["display"]["ledBrightness"]
-        options.pwm_lsb_nanoseconds = self.config["display"]["ledPwmLsbNanoseconds"]
-        options.led_rgb_sequence = self.config["display"]["ledRgbSequence"]
-        options.pixel_mapper_config = self.config["display"]["ledPixelMapper"]
-        if self.config["display"]["ledShowRefresh"]:
-            options.show_refresh_rate = 1
+            if self.config["display"].get("ledGpioMapping") != None:
+                options.hardware_mapping = self.config["display"]["ledGpioMapping"]
+            options.rows = self.config["display"]["ledRows"]
+            options.cols = self.config["display"]["ledCols"]
+            options.chain_length = self.config["display"]["ledChain"]
+            options.parallel = self.config["display"]["ledParallel"]
+            options.row_address_type = self.config["display"]["ledRowAddrType"]
+            options.multiplexing = self.config["display"]["ledMultiplexing"]
+            options.pwm_bits = self.config["display"]["ledPwmBits"]
+            options.brightness = self.config["display"]["ledBrightness"]
+            options.pwm_lsb_nanoseconds = self.config["display"]["ledPwmLsbNanoseconds"]
+            options.led_rgb_sequence = self.config["display"]["ledRgbSequence"]
+            options.pixel_mapper_config = self.config["display"]["ledPixelMapper"]
+            if self.config["display"]["ledShowRefresh"]:
+                options.show_refresh_rate = 1
 
-        if self.config["display"].get("ledSlowdownGpio") != None:
-            options.gpio_slowdown = self.config["display"]["ledSlowdownGpio"]
-        if self.config["display"].get("ledNoHardwarePulse") != None:
-            options.disable_hardware_pulsing = self.config["display"]["ledNoHardwarePulse"]
+            if self.config["display"].get("ledSlowdownGpio") != None:
+                options.gpio_slowdown = self.config["display"]["ledSlowdownGpio"]
+            if self.config["display"].get("ledNoHardwarePulse") != None:
+                options.disable_hardware_pulsing = self.config["display"]["ledNoHardwarePulse"]
 
-        self.matrix = RGBMatrix(options = options)
+            self.matrix = RGBMatrix(options = options)
+
         self.offscreen_canvas = self.matrix.CreateFrameCanvas()
         self.offscreen_canvas.Clear()
 
