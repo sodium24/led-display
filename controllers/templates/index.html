@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} {{ title }} {% endblock %}</h1>
+    <div><b>Current Screen:</b> <span id="screen-num">loading</span>/<span id="screen-total">loading</span> <b>Name:</b> <span id="screen-name">loading...</span></div>
+    <div><b>Input Controls:</b>
+        <button onclick="send_input_event('left')">&larr;</button>
+        <button onclick="send_input_event('up')">&uarr;</button>
+        <button onclick="send_input_event('down')">&darr;</button>
+        <button onclick="send_input_event('right')" style="margin-right:20px">&rarr;</button>
+        <button onclick="send_input_event('select')">select</button>
+    </div>
+    <script>
+        var config = {};
+        function do_get_config() {
+            $.get("/api/get_config", function(data) {
+                config = data.config;
+                $("#screen-total").text(config.screenOrder.length);
+            }).fail(function() {
+                setTimeout(do_get_config, 1000);
+            });
+        };
+        function do_update_state() {
+            $.get("/api/get_state", function(data) {
+                $("#screen-num").text(data.screenIndex + 1);
+                $("#screen-name").text(data.screenName);
+                setTimeout(do_update_state, 1000);
+            }).fail(function() {
+                setTimeout(do_update_state, 1000);
+            });
+        };
+        function send_input_event(inputEvent) {
+            $.ajax({
+                url: "/api/input_event",
+                type:"POST",
+                data: JSON.stringify({"inputEvent": inputEvent}),
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: function() {}
+            });
+        };
+        do_get_config();
+        do_update_state();
+    </script>
+{% endblock %}

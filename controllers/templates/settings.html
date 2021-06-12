@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} {{ title }} {% endblock %}</h1>
+    <div><b>Current Configuration:</b></div>
+    <textarea id="current-config" rows="50" cols="80"></textarea>
+    <div>
+        <button onclick="do_get_config()">Reload</button>
+        <button onclick="do_set_config()">Apply</button>
+        <button onclick="do_save_config()">Save</button>
+    </div>
+    <script>
+        var config = {};
+        function do_get_config() {
+            $.get("/api/get_config", function(data) {
+                config = data.config;
+                $("#current-config")[0].value = JSON.stringify(config, null, 4);
+            }).fail(function() {
+                setTimeout(do_get_config, 1000);
+            });
+        };
+        function do_set_config() {
+            $.ajax({
+                url: "/api/set_config",
+                type:"POST",
+                data: JSON.stringify({"config": JSON.parse($("#current-config")[0].value)}),
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: function() {
+                    console.log("Configuration applied!");
+                }
+            }).fail(function() {
+                console.error("Could not apply configuration!");
+            });
+        };
+        function do_save_config() {
+            $.ajax({
+                url: "/api/save_config",
+                type:"POST",
+                data: JSON.stringify({"config": JSON.parse($("#current-config")[0].value)}),
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: function() {
+                    console.log("Configuration saved!");
+                }
+            }).fail(function() {
+                console.error("Could not save configuration!");
+            });
+        };
+        do_get_config();
+    </script>
+{% endblock %}

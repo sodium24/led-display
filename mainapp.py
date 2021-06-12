@@ -5,19 +5,38 @@ import threading
 import time
 import appbase
 import controllerserver
+import os
 
 class MainApp(appbase.AppBase):
-    def __init__(self, config):
+    def __init__(self, json_file):
         self.loaded_fonts = {}
+        self.json_file = json_file
+        with open(self.json_file) as f:
+            config = json.loads(f.read())
+
         super(MainApp, self).__init__(config, config, self.loaded_fonts)
 
         self.config = config
         self.current_screen_index = -1
+        self.current_screen_name = ""
         self.screen_index = 0
         self.running = False
         self.current_app = None
         self.controller = controllerserver.ControllerServer(self)
         self.controller.start()
+        self.restart_app = False
+
+    def save_config(self):
+        try:
+            os.unlink(self.json_file + ".bak")
+        except Exception:
+            pass
+        try:
+            os.rename(self.json_file, self.json_file + ".bak")
+        except Exception:
+            pass
+        with open(self.json_file, "w") as f:
+            f.write(json.dumps(self.config, indent=4))
 
     def on_input_event(self, input_event):
         handled = False
@@ -47,6 +66,7 @@ class MainApp(appbase.AppBase):
         self.start_app_by_name(screen_name)
 
     def start_app_by_name(self, screen_name):
+        self.current_screen_name = screen_name
         screen_app = self.config["screens"][screen_name]
         screen_class = addons.apps[screen_app["app"]]
         app_config = screen_app.get("config", {})
@@ -65,7 +85,8 @@ class MainApp(appbase.AppBase):
 
     def run(self):
         while True:
-            if self.current_screen_index != self.screen_index:
+            if self.current_screen_index != self.screen_index or self.restart_app:
+                self.restart_app = False
                 try:
                     self.start_app(self.screen_index)
                 except Exception as err:
@@ -79,10 +100,7 @@ def main():
         print("Usage: %s <config_json_file>" % sys.argv[0])
         exit(1)
 
-    with open(sys.argv[1]) as json_file:
-        json_config = json.loads(json_file.read())
-
-    main_app = MainApp(json_config)
+    main_app = MainApp(sys.argv[1])
     main_app.start()
 
 if __name__ == "__main__":

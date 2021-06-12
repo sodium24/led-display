@@ -2,7 +2,6 @@ import controllerclient
 import cmd
 
 controller = controllerclient.ControllerClient()
-controller.start()
 
 class LedDisplayCli(cmd.Cmd):
     intro = "LED Display CLI\n\nType help or ? to list commands.\n"

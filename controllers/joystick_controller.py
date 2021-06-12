@@ -1,7 +1,7 @@
 import os
 import time
 import fcntl
-import controllers.joystick_device
+import joystick_device
 import controllerclient
 
 def has_js():
@@ -15,9 +15,8 @@ class JoystickController(object):
     def __init__(self, error_handler=None):
         self.current_action = (None, 0.0)
         self.controller = controllerclient.ControllerClient()
-        self.controller.start()
 
-        self.jsdev = controllers.joystick_device.Joystick("/dev/input/js0")
+        self.jsdev = joystick_device.Joystick("/dev/input/js0")
         self.jsdev.on_press = self.on_press
         self.jsdev.on_release = self.on_release
         self.jsdev.on_axis = self.on_axis

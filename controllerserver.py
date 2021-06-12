@@ -2,27 +2,23 @@ import socket
 import sys
 import os
 import threading
-import select
 import json
+import socket
 import weakref
+from controllers.streammessage import StreamMessage
 
 class ControllerServer(object):
+    PORT = 1337
+
     def __init__(self, app=None):
         if app is None:
             self.app = None
         else:
             self.app = weakref.ref(app)
 
-        # create a domain socket to connect to controller(s)
-        server_address = "/tmp/led-display-control"
-        try:
-            os.unlink(server_address)
-        except OSError:
-            if os.path.exists(server_address):
-                raise
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-        self.sock.bind(server_address)
-        os.chmod(server_address, 0o777)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.bind(("0.0.0.0", self.PORT))
+
         self.server_thread = None
         self.stop_flag = False
         self.handlers = {
@@ -30,22 +26,27 @@ class ControllerServer(object):
             "input_event": self.on_input_event,
             "joystick_press": self.on_joystick_press,
             "joystick_release": self.on_joystick_release,
+            "get_state": self.on_get_state,
+            "get_config": self.on_get_config,
+            "set_config": self.on_set_config,
+            "save_config": self.on_save_config,
         }
 
     def serve(self):
-        poll = select.poll()
-        poll.register(self.sock, select.POLLIN)
+
+        self.socket.listen(1)
+
         while not self.stop_flag:
-            if len(poll.poll(100)) > 0:
-                command, client_address = self.sock.recvfrom(65536)
-                if command:
-                    command = json.loads(command.decode())
-                    print("server", command)
-                    try:
-                        response = self.handlers[command["type"]](command)
-                        self.sock.sendto(json.dumps({"id": command["id"]}).encode(), client_address)
-                    except KeyError as err:
-                        print("Command not found: " + err)
+            conn, addr = self.socket.accept()            
+            message = StreamMessage.recv(conn)
+            if message:
+                print("server", message)
+                try:
+                    response = self.handlers[message["type"]](message)
+                    StreamMessage.send(response, conn)
+                except KeyError as err:
+                    print("Command not found: %s" % err)
+            conn.close()
 
     def start(self):
         self.server_thread = threading.Thread(target=self.serve)
@@ -55,11 +56,36 @@ class ControllerServer(object):
     def stop(self):
         if self.server_thread:
             self.stop_flag = True
-            self.sock.close()
+            self.socket.close()
             self.server_thread.join()
             self.server_thread = None
 
     def on_ping(self, data):
+        return {}
+
+    def on_get_state(self, data):
+        if self.app is not None:
+            app = self.app()
+            return {"screenIndex": app.current_screen_index, "screenName": app.current_screen_name}
+        else:
+            return {}
+
+    def on_get_config(self, data):
+        return {"config": self.app().config}
+
+    def on_set_config(self, data):
+        self.app().config = data["config"]
+        if self.app().current_app:
+            self.app().current_app.stop()
+            self.app().restart_app = True
+        return {}
+
+    def on_save_config(self, data):
+        self.app().config = data["config"]
+        if self.app().current_app:
+            self.app().current_app.stop()
+            self.app().restart_app = True
+        self.app().save_config()
         return {}
 
     def on_input_event(self, data):
