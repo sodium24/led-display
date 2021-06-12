@@ -1,6 +1,4 @@
 from appbase import AppBase
-from PIL import Image
-from rgbmatrix import graphics
 import time
 import datetime
 
@@ -20,6 +18,7 @@ class ImageDisplay(AppBase):
                 image_control.y = display["rect"][1]
                 image_control.width = display["rect"][2]
                 image_control.height = display["rect"][3]
+                image_control.enabled = display.get("enable", True)
 
             elif display["type"] == "text":
                 text_control = self.create_control("text", "text_" + str(i))
@@ -30,7 +29,8 @@ class ImageDisplay(AppBase):
                 text_control.y = display["point"][1]
                 text_control.align = display["align"]
                 text_control.scroll = display["scroll"]
-                if not text_control.static:
+                text_control.enabled = display.get("enable", True)
+                if text_control.enabled and not text_control.static:
                     static_display = False
 
             elif display["type"] == "datetime":
@@ -41,13 +41,15 @@ class ImageDisplay(AppBase):
                 text_control.y = display["point"][1]
                 text_control.align = display["align"]
                 text_control.scroll = display["scroll"]
+                text_control.enabled = display.get("enable", True)
 
                 clocks += [{
                     "format": display["format"],
                     "control": text_control
                 }]
 
-                static_display = False
+                if text_control.enabled:
+                    static_display = False
 
         while not self.stopFlag:
             time_val = datetime.datetime.now()
