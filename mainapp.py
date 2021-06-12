@@ -44,6 +44,9 @@ class MainApp(appbase.AppBase):
     def start_app(self, index):
         self.current_screen_index = self.screen_index = index
         screen_name = self.config["screenOrder"][self.screen_index]
+        self.start_app_by_name(screen_name)
+
+    def start_app_by_name(self, screen_name):
         screen_app = self.config["screens"][screen_name]
         screen_class = addons.apps[screen_app["app"]]
         app_config = screen_app.get("config", {})
@@ -67,6 +70,7 @@ class MainApp(appbase.AppBase):
                     self.start_app(self.screen_index)
                 except Exception as err:
                     print("Exception while running app: %s" % err)
+                    self.running = False
             else:
                 time.sleep(1)
 
