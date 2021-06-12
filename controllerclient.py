@@ -25,6 +25,7 @@ class ControllerClient(object):
         self.awaiting_response = {}
         self.server_thread = None
         self.stop_flag = False
+        self.awaiting_response_lock = threading.Lock()
 
     def serve(self):
         poll = select.poll()
@@ -35,23 +36,26 @@ class ControllerClient(object):
                 if command:
                     command = json.loads(command.decode())
                     command_id = command["id"]
-                    on_success = self.awaiting_response[command_id]["on_success"]
-                    if on_success:
-                        on_success()
-                    del self.awaiting_response[command_id]
-                    print("response", command)
+                    with self.awaiting_response_lock:
+                        if command_id in self.awaiting_response:
+                            on_success = self.awaiting_response[command_id]["on_success"]
+                            if on_success:
+                                on_success()
+                            del self.awaiting_response[command_id]
+                            print("response", command)
 
             now = time.time()
             to_delete = []
-            for command_id in self.awaiting_response:
-                if now - self.awaiting_response[command_id]["time"] > self.TIMEOUT:
-                    on_failure = self.awaiting_response[command_id]["on_failure"]
-                    if on_failure:
-                        on_failure()
-                    to_delete += [command_id]
+            with self.awaiting_response_lock:
+                for command_id in self.awaiting_response:
+                    if now - self.awaiting_response[command_id]["time"] > self.TIMEOUT:
+                        on_failure = self.awaiting_response[command_id]["on_failure"]
+                        if on_failure:
+                            on_failure()
+                        to_delete += [command_id]
 
-            for command_id in to_delete:
-                del self.awaiting_response[command_id]
+                for command_id in to_delete:
+                    del self.awaiting_response[command_id]
 
     def start(self):
         self.server_thread = threading.Thread(target=self.serve)
@@ -72,19 +76,47 @@ class ControllerClient(object):
             on_failure=on_failure)
 
     def send_input_event(self, input_event, on_success=None, on_failure=None):
-        self.send_sync_command("input_event",
-            {"input_event": input_event},
-            on_success=on_success, 
-            on_failure=on_failure)
+        try:
+            self.send_sync_command("input_event",
+                {"input_event": input_event},
+                on_success=on_success, 
+                on_failure=on_failure)
+        except Exception as err:
+            print(err)
+            if on_failure:
+                on_failure(err)
+
+    def send_joystick_press(self, button, button_states, on_success=None, on_failure=None):
+        try:
+            self.send_sync_command("joystick_press",
+                {"button": button, "button_states": button_states},
+                on_success=on_success, 
+                on_failure=on_failure)
+        except Exception as err:
+            print(err)
+            if on_failure:
+                on_failure(err)
+
+    def send_joystick_release(self, button, button_states, on_success=None, on_failure=None):
+        try:
+            self.send_sync_command("joystick_release",
+                {"button": button, "button_states": button_states},
+                on_success=on_success, 
+                on_failure=on_failure)
+        except Exception as err:
+            print(err)
+            if on_failure:
+                on_failure(err)
 
     def send_sync_command(self, command_type, data, on_success=None, on_failure=None):
         data["type"] = command_type
         data["id"] = self.id
         self.sock.sendto(json.dumps(data).encode(), self.server_address)
-        self.awaiting_response[self.id] = {
-            "time": time.time(),
-            "on_success": on_success,
-            "on_failure": on_failure,
-        }
-        self.id += 1
+        with self.awaiting_response_lock:
+            self.awaiting_response[self.id] = {
+                "time": time.time(),
+                "on_success": on_success,
+                "on_failure": on_failure,
+            }
+            self.id += 1
 

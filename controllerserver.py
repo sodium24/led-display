@@ -27,7 +27,9 @@ class ControllerServer(object):
         self.stop_flag = False
         self.handlers = {
             "ping": self.on_ping,
-            "input_event": self.on_input_event
+            "input_event": self.on_input_event,
+            "joystick_press": self.on_joystick_press,
+            "joystick_release": self.on_joystick_release,
         }
 
     def serve(self):
@@ -61,6 +63,19 @@ class ControllerServer(object):
         return {}
 
     def on_input_event(self, data):
+        handled = False
         if self.app is not None:
-            self.app().on_input_event(data["input_event"])
-        return {}
+            handled = self.app().on_input_event(data["input_event"])
+        return {"handled": handled}
+
+    def on_joystick_press(self, data):
+        handled = False
+        if self.app is not None:
+            handled = self.app().on_joystick_press(data["button"], data["button_states"])
+        return {"handled": handled}
+
+    def on_joystick_release(self, data):
+        handled = False
+        if self.app is not None:
+            handled = self.app().on_joystick_release(data["button"], data["button_states"])
+        return {"handled": handled}

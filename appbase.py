@@ -52,6 +52,12 @@ class AppBase(object):
     def on_input_event(self, input_event):
         return False
 
+    def on_joystick_press(self, button, button_states):
+        return False
+
+    def on_joystick_release(self, button, button_states):
+        return False
+
     def run(self):
         return
 

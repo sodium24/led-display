@@ -7,5 +7,8 @@
 # not be modified. It can be be restored by running the `synack-restore-defaults.sh`
 # script.
 
+# Run the joystick controller
+python /home/pi/led-display/joystick_controller.py &
+
 # Run the default startup program!
-sudo python /home/pi/led-display/main_app.py /home/pi/synack-config.json
+sudo python /home/pi/led-display/mainapp.py /home/pi/synack-config.json
