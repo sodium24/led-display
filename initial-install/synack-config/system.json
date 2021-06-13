@@ -1,0 +1,30 @@
+{
+    "display": {
+        "ledRows": 32,
+        "ledCols": 64,
+        "ledChain": 2,
+        "ledParallel": 1,
+        "ledPwmBits": 11,
+        "ledBrightness": 100,
+        "ledScanMode": 1,
+        "ledPwmLsbNanoseconds": 130,
+        "ledShowRefresh": false,
+        "ledRgbSequence": "RGB",
+        "ledPixelMapper": "U-mapper",
+        "ledRowAddrType": 0,
+        "ledMultiplexing": 0
+    },
+    "settings": {
+        "title": "Synack LED Display"
+    },
+    "fonts": {
+        "6x9": {
+            "path": "/home/pi/led-display/fonts/6x9.bdf",
+            "outline": false
+        },
+        "7x13": {
+            "path": "/home/pi/led-display/fonts/7x13.bdf",
+            "outline": false
+        }
+    }
+}

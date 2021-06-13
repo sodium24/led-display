@@ -1,0 +1,24 @@
+{
+    "app": "menu",
+    "config": {
+        "title_text": "MENU",
+        "title_font": "6x9",
+        "title_color": [255, 0, 0],
+        "title_height": 9,
+        "item_font": "6x9",
+        "item_color": [255, 255, 255],
+        "item_height": 9,
+        "selected_bgcolor": [255, 255, 255],
+        "selected_fgcolor": [0, 0, 0],
+        "menu": [
+            {
+                "text": "SNAKE",
+                "screen": "snake"
+            },
+            {
+                "text": "TURN OFF",
+                "screen": "turn_off"
+            }
+        ]
+    }
+}

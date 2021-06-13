@@ -1,0 +1,7 @@
+{
+    "app": "snake",
+    "config": {
+        "speed": 100,
+        "increaseSpeed": false
+    }
+}

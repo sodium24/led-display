@@ -1,7 +1,7 @@
 ################################################################################
 # image_display.py
 #-------------------------------------------------------------------------------
-# Customizable app for showing images, text, clock, etc. on the LED display.
+# Customizable app for showing images, text, clock, etc on the LED display.
 # Its operation can be adjusted through the JSON configuration settings.
 # 
 # By Malcolm Stagg

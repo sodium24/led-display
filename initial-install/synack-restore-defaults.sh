@@ -9,13 +9,15 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 service led-display stop
 
-ln -s $SCRIPT_DIR/synack-restore-defaults.sh ~/led-sign-restore-defaults.sh
+ln -s $SCRIPT_DIR/synack-restore-defaults.sh ~/led-display-restore-defaults.sh
 
-cp -f $SCRIPT_DIR/synack-startup.sh ~/led-sign-startup.sh
-chmod 755 ~/led-sign-startup.sh
+cp -f $SCRIPT_DIR/synack-startup.sh ~/led-display-startup.sh
+chmod 755 ~/led-display-startup.sh
 
 cp -f $SCRIPT_DIR/led-display.service /etc/systemd/system/
 systemctl enable led-display
+
+cp -rf $SCRIPT_DIR/synack-config ~/
 
 echo '---------------------[ SYNACK LED SIGN ]--------------------'
 echo ''

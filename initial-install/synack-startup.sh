@@ -7,6 +7,6 @@
 # not be modified. It can be be restored by running the `synack-restore-defaults.sh`
 # script.
 
-sudo python /home/pi/led-display/main_app.py /home/pi/synack-config.json
+sudo LED_DISPLAY_CONFIG=/home/pi/synack-config python /home/pi/led-display/main_app.py
 
 

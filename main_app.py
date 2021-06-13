@@ -37,19 +37,32 @@ from app_base import AppBase
 import controllers.joystick_translator
 
 class MainApp(AppBase):
-    def __init__(self, json_file):
+    def __init__(self):
         # Cache of loaded fonts
         self.loaded_fonts = {}
 
-        # Load the JSON configuration file
-        self.json_file = json_file
-        with open(self.json_file) as f:
-            config = json.loads(f.read())
+        config_directory = os.getenv("LED_DISPLAY_CONFIG")
+        if config_directory is None:
+            config_directory = os.path.join(os.getcwd(), "config")
+
+        system_config = self.load_system_config(config_directory)
+        app_list = self.enumerate_screen_names(config_directory)
+        for screen_name in app_list:
+            self.load_app_config(config_directory, screen_name)
+
+        # Order of screens to display
+        screen_order_path = os.path.join(config_directory, "screen_order.txt")
+        screen_order_list = []
+        with open(screen_order_path) as f:
+            line = f.readline().replace("\r", "").replace("\n", "")
+            while line:
+                screen_order_list += [line]
+                line = f.readline().replace("\r", "").replace("\n", "")
 
         # AppBase initialization
-        super(MainApp, self).__init__(config, config, self.loaded_fonts)
+        super(MainApp, self).__init__(system_config, {}, self.loaded_fonts, config_directory=config_directory)
 
-        self.config = config
+        self.screen_order = screen_order_list
         self.current_screen_index = -1
         self.current_screen_name = ""
         self.screen_index = 0
@@ -90,12 +103,12 @@ class MainApp(AppBase):
         if not handled:
             if input_event == "right":
                 self.screen_index += 1
-                self.screen_index %= len(self.config["screenOrder"])
+                self.screen_index %= len(self.screen_order)
                 self.stop_running_app()
                 handled = True
             elif input_event == "left":
                 self.screen_index -= 1
-                self.screen_index %= len(self.config["screenOrder"])
+                self.screen_index %= len(self.screen_order)
                 self.stop_running_app()
                 handled = True
 
@@ -177,7 +190,7 @@ class MainApp(AppBase):
 
     def _start_app(self, index):
         self.current_screen_index = self.screen_index = index
-        screen_name = self.config["screenOrder"][self.screen_index]
+        screen_name = self.screen_order[self.screen_index]
         self.current_screen_name = screen_name
         self._start_app_by_name(screen_name)
 
@@ -195,11 +208,7 @@ class MainApp(AppBase):
                 time.sleep(1)
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: %s <config_json_file>" % sys.argv[0])
-        exit(1)
-
-    main_app = MainApp(sys.argv[1])
+    main_app = MainApp()
     main_app.start()
 
 if __name__ == "__main__":

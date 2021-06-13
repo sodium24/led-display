@@ -3,7 +3,7 @@ Description=LED Matrix Display
 After=network.target
 
 [Service]
-ExecStart=/home/pi/led-sign-startup.sh
+ExecStart=/home/pi/led-display-startup.sh
 
 [Install]
 WantedBy=multi-user.target

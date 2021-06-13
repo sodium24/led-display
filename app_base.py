@@ -31,13 +31,14 @@ import argparse
 import time
 import sys
 import os
+import json
 import weakref
 import app_controls
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
 
 class AppBase(object):
-    def __init__(self, config, app_config, loaded_fonts, matrix=None, parent=None):
+    def __init__(self, config, app_config, loaded_fonts, matrix=None, parent=None, config_directory=None):
         self.config = config
         self.app_config = app_config
         self.loaded_fonts = loaded_fonts
@@ -50,6 +51,7 @@ class AppBase(object):
             "rect": app_controls.RectControl,
         }
         self.matrix = matrix
+        self.config_directory = config_directory
         self.next_z_index = 0
         self.on_app_exit = None
 
@@ -59,6 +61,27 @@ class AppBase(object):
 
         if parent is not None:
             self.parent_app = weakref.ref(parent)
+
+    def load_system_config(self, config_directory):
+        system_json_path = os.path.join(config_directory, "system.json")
+        with open(system_json_path) as f:
+            system_config = json.loads(f.read())
+        return system_config
+
+    def enumerate_screen_names(self, config_directory):
+        app_list = []
+        apps_path = os.path.join(config_directory, "apps")
+        for filename in os.listdir(apps_path):
+            if os.path.splitext(filename)[1].lower() == ".json":        
+                app_list += [os.path.splitext(filename)[0]]
+
+        return app_list
+
+    def load_app_config(self, config_directory, screen_name):
+        apps_path = os.path.join(config_directory, "apps")
+        app_json_path = os.path.join(apps_path, screen_name + ".json")
+        with open(app_json_path) as f:
+            return json.loads(f.read())
 
     def load_font(self, font_name):
         if font_name not in self.loaded_fonts:
@@ -131,10 +154,9 @@ class AppBase(object):
 
     def _start_app_by_name(self, screen_name):
         import addons
-        screen_app = self.config["screens"][screen_name]
-        screen_class = addons.apps[screen_app["app"]]
-        app_config = screen_app.get("config", {})
-        self.running_app = screen_class(self.config, app_config, self.loaded_fonts, matrix=self.matrix, parent=self)
+        app_config = self.load_app_config(self.config_directory, screen_name)
+        screen_class = addons.apps[app_config["app"]]
+        self.running_app = screen_class(self.config, app_config.get("config", {}), self.loaded_fonts, matrix=self.matrix, parent=self, config_directory=self.config_directory)
         try:
             print("Starting app for screen " + screen_name)
             print("Press CTRL-C to stop...")
