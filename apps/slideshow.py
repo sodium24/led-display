@@ -67,7 +67,7 @@ class Slideshow(AppBase):
 
         current_indx = 0
 
-        while len(image_controls) > 0 and not self.stop_flag:
+        while len(image_controls) > 0 and not self.stop_event.is_set():
             image_controls[current_indx].enabled = True
 
             # update the display buffer with image data from the controls
@@ -76,12 +76,12 @@ class Slideshow(AppBase):
             # redraw the display
             self.draw()
 
-            for n in range(5):
-                if self.stop_flag: break
-                time.sleep(1)
+            # display for a delay
+            if self.stop_event.wait(5.0):
+                break
 
+            # go on to the next picture
             image_controls[current_indx].enabled = False
 
             current_indx += 1
-            if current_indx >= len(image_controls):
-                current_indx = 0
+            current_indx %= len(image_controls)

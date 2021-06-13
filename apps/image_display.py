@@ -90,7 +90,7 @@ class ImageDisplay(AppBase):
                 if text_control.enabled:
                     static_display = False
 
-        while not self.stop_flag:
+        while not self.stop_event.wait(0.1):
             time_val = datetime.datetime.now()
             for clock in clocks:
                 clock["control"].text = time_val.strftime(clock["format"])
@@ -104,4 +104,4 @@ class ImageDisplay(AppBase):
             if static_display:
                 break
 
-            time.sleep(0.1)
+        self.stop_event.wait()

@@ -72,7 +72,7 @@ class ControllerServer(ControllerBase):
         """
         self.socket.listen(1)
 
-        while not self.exit_flag:
+        while not self.stop_event.is_set():
             conn, addr = self.socket.accept()            
             message = StreamMessage.recv(conn)
             if message:
@@ -83,6 +83,13 @@ class ControllerServer(ControllerBase):
                 except KeyError as err:
                     print("Command not found: %s" % err)
             conn.close()
+
+    def stop(self):
+        """
+        Stop a running controller
+        """
+        self.socket.close()
+        super(ControllerServer, self).stop()
 
     def on_ping(self, data):
         """

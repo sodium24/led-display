@@ -32,12 +32,12 @@ import threading
 import sys
 from flask import Flask, json, request, render_template
 from controller_base import ControllerBase
-from controller_client import ControllerClient
+from controllers.controller_client import ControllerClient
 from multiprocessing import Process
 
 def web_process(ip, port, debug):
     """
-    Website interface for the LED display
+    WIP website interface for the LED display
     """
 
     app = Flask(__name__)
@@ -111,7 +111,7 @@ def web_process(ip, port, debug):
         title = config_data.get("config", {}).get("settings", {}).get("title", "LED Display")
         return render_template('index.html', title=title)
 
-    app.run(host=ip, port=port, debug=debug)
+    app.run(host=ip, port=port, debug=debug, use_reloader=False)
 
 class WebController(ControllerBase):
     """

@@ -264,7 +264,7 @@ def PlayGame(display_handler, input_handler, speed, increase_speed):
 
         player_died = False
 
-        while not player_died and not exit_now:
+        while not player_died and not exit_now and not input_handler.stop_event.is_set():
             if no_food:
                 while no_food:
                     food_row = random.randint(1, 63)
@@ -407,10 +407,12 @@ def SpacePause(display_handler, input_handler, short_text):
 
     while not input_handler.button_state('a') and not input_event:
         input_event = input_handler.get_input_event()
-        time.sleep(0.1)
+        if input_handler.stop_event.wait(0.1):
+            break
 
     while input_handler.button_state('a') and not input_event:
-        time.sleep(0.01)
+        if input_handler.stop_event.wait(0.01):
+            break
 
     # Restore the screen background
     for i in range(26, 36):
@@ -434,7 +436,8 @@ def StillWantsToPlay(display_handler, input_handler):
 
     while not input_handler.button_state('a') and not input_handler.button_state('b') and not input_handler.button_state('start') and not input_event:
         input_event = input_handler.get_input_event()
-        time.sleep(0.1)
+        if input_handler.stop_event.wait(0.1):
+            break
 
     if input_handler.button_state('a') or input_event == "select":
         selection = True
@@ -442,8 +445,9 @@ def StillWantsToPlay(display_handler, input_handler):
         display_handler.Clear()
         selection = False
 
-    while input_handler.button_state('a') or input_handler.button_state('b') or input_handler.button_state('start'):
-        time.sleep(0.1)
+    while (input_handler.button_state('a') or input_handler.button_state('b') or input_handler.button_state('start')) and not input_handler.stop_event.is_set():
+        if input_handler.stop_event.wait(0.1):
+            break
 
     return selection
 
@@ -475,7 +479,8 @@ class InputHandler(object):
     """
     Wrapper for the input device
     """
-    def __init__(self):
+    def __init__(self, stop_event):
+        self.stop_event = stop_event
         self.button_states = {}
         self.axis_states = {}
         self.last_input_event = None
@@ -549,14 +554,14 @@ class SnakeGame(AppBase):
         font_6_9 = self.load_font("6x9")
         display_handler = DisplayHandler(self.matrix, font_6_9)
         display_handler.Clear()
-        self.input_handler = InputHandler()
+        self.input_handler = InputHandler(self.stop_event)
 
         speed = float(self.app_config.get("speed", 100))
         increase_speed = self.app_config.get("increaseSpeed", False)
 
         try:
             continue_playing = True
-            while continue_playing:
+            while continue_playing and not self.stop_event.is_set():
                 PlayGame(display_handler, self.input_handler, speed, increase_speed)
                 continue_playing = StillWantsToPlay(display_handler, self.input_handler)
 

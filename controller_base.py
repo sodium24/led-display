@@ -42,7 +42,7 @@ class ControllerBase(object):
         self.config = config
         self.main_app = weakref.ref(main_app)
         self.controller_thread = None
-        self.exit_flag = False
+        self.stop_event = threading.Event()
 
     def start(self):
         """
@@ -57,7 +57,7 @@ class ControllerBase(object):
         Stop a running controller
         """
         if self.controller_thread is not None:
-            self.exit_flag = True
+            self.stop_event.set()
             self.controller_thread.join()
             self.controller_thread = None
 

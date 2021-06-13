@@ -219,7 +219,12 @@ class Menu(AppBase):
 
         is_static = self.is_static()
 
-        while not self.stop_flag:
+        if is_static:
+            update_rate = 1.0
+        else:
+            update_rate = 0.1
+
+        while not self.stop_event.wait(update_rate):
             if self.selected_app is not None:
                 try:
                     self._start_app(self.selected_app)
@@ -230,8 +235,5 @@ class Menu(AppBase):
                     self.running_app = None
                 self.redraw()
             else:
-                if is_static:
-                    time.sleep(1)
-                else:
+                if not is_static:
                     self.redraw()
-                    time.sleep(0.1)

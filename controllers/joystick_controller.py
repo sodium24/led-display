@@ -31,11 +31,15 @@
 import os
 import time
 import fcntl
-import joystick_device
 import weakref
+from controllers.joystick_device import Joystick
 from controller_base import ControllerBase
 
 def has_js():
+    """
+    Check if a joystick is present
+    """
+
     for filename in os.listdir('/dev/input'):
         if filename.startswith('js'):
             return True
@@ -58,27 +62,34 @@ class JoystickController(ControllerBase):
         Main joystick controller run loop, to keep detecting joystick
         presence, and when it connects, listen for input events
         """
-        while not self.exit_flag:
-            while not has_js():
-                time.sleep(1)
+        while not self.stop_event.wait(1.0):
+
+            # Wait for the joystick to show up
+            while not has_js() and not self.stop_event.wait(1.0):
+                continue
+
+            # Exit if terminated
+            if self.stop_event.is_set():
+                break
 
             jsdev = None
 
             try:
-                jsdev = joystick_device.Joystick("/dev/input/js0")
+                jsdev = Joystick("/dev/input/js0")
                 jsdev.on_press = self.send_joystick_press
                 jsdev.on_release = self.send_joystick_release
                 jsdev.on_axis = self.send_joystick_axis
 
-                while has_js() and not jsdev.failed and not self.exit_flag:
-                    time.sleep(1)
+                # Continue while the joystick exists
+                while has_js() and not jsdev.failed and not self.stop_event.wait(1.0):
+                    continue
             except Exception as err:
                 print("Exception" + str(err))
        
             if jsdev:
+                # Terminate the joystick
+
                 jsdev.on_press = None
                 jsdev.on_release = None
                 jsdev.on_axis = None
                 jsdev.terminate()
-
-            time.sleep(1)

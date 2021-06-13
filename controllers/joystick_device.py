@@ -123,7 +123,7 @@ class Joystick():
         self.axis_map = []
         self.button_map = []
         self.event_thread = None
-        self.exit_flag = False
+        self.stop_event = threading.Event()
         self.failed = False
 
         self.on_press = None
@@ -138,7 +138,7 @@ class Joystick():
         """
         Terminate the joystick device
         """
-        self.exit_flag = True
+        self.stop_event.set()
         if self.event_thread:
             self.event_thread.join()
 
@@ -181,7 +181,7 @@ class Joystick():
                 print('%d axes found: %s' % (self.num_axes, ', '.join(self.axis_map)))
                 print('%d buttons found: %s' % (self.num_buttons, ', '.join(self.button_map)))
 
-                while not self.exit_flag:
+                while not self.stop_event.is_set():
                     evbuf = jsdev.read(8)
                     if evbuf:
                         time, value, type, number = struct.unpack('IhBB', evbuf)

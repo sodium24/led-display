@@ -33,6 +33,7 @@ import sys
 import os
 import json
 import weakref
+import threading
 import app_controls
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
@@ -48,7 +49,7 @@ class AppBase(object):
         self.config = config
         self.app_config = app_config
         self.loaded_fonts = loaded_fonts
-        self.stop_flag = False
+        self.stop_event = threading.Event()
         self.controls = {}
         self.control_classes = {
             "fill": app_controls.FillControl,
@@ -234,8 +235,7 @@ class AppBase(object):
         """
         Attempt to stop the current app
         """
-        if self.parent_app is not None:
-            self.stop_flag = True
+        self.stop_event.set()
 
     def start(self):
         """

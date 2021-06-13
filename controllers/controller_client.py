@@ -34,7 +34,7 @@ import threading
 import socket
 import json
 import time
-from stream_message import StreamMessage
+from controllers.stream_message import StreamMessage
 
 class ControllerClient(object):
     """
