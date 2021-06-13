@@ -37,6 +37,9 @@ from app_base import AppBase
 import controllers.joystick_translator
 
 class MainApp(AppBase):
+    """
+    Main app which runs at startup and allows other apps to be run based on user input
+    """
     def __init__(self):
         # Cache of loaded fonts
         self.loaded_fonts = {}
@@ -80,9 +83,15 @@ class MainApp(AppBase):
             self.controllers += [controller]
 
     def get_state(self):
+        """
+        Retrieve the current app state
+        """
         return {"screenIndex": self.current_screen_index, "screenName": self.current_screen_name}
 
     def save_config(self):
+        """
+        Save an updated configuration [TODO: this references the wrong file!]
+        """
         try:
             os.unlink(self.json_file + ".bak")
         except Exception:
@@ -95,6 +104,9 @@ class MainApp(AppBase):
             f.write(json.dumps(self.config, indent=4))
 
     def on_input_event(self, input_event):
+        """
+        Handle an input event. Return true if handled.
+        """
         handled = False
 
         if not handled and self.running_app is not None:
@@ -122,6 +134,9 @@ class MainApp(AppBase):
         return handled
 
     def on_joystick_press(self, button, button_states):
+        """
+        Handle a joystick button press. Return true if handled.
+        """
         handled = False
 
         input_event = self.joystick_translator.on_joystick_press(button, button_states)
@@ -138,6 +153,9 @@ class MainApp(AppBase):
         return handled
 
     def on_joystick_release(self, button, button_states):
+        """
+        Handle a joystick button release. Return true if handled.
+        """
         handled = False
 
         input_event = self.joystick_translator.on_joystick_release(button, button_states)
@@ -156,6 +174,9 @@ class MainApp(AppBase):
         return handled
 
     def on_joystick_axis(self, axis_states):
+        """
+        Handle a joystick axis event. Return true if handled.
+        """
         handled = False
 
         input_event = self.joystick_translator.on_joystick_axis(axis_states)
@@ -172,6 +193,9 @@ class MainApp(AppBase):
         return handled
 
     def enter_sleep_mode(self):
+        """
+        Used for entering a sleep mode where the LED panel is turned off
+        """
         if self.running_app:
             def on_app_exit(app):
                 self.matrix.Clear()
@@ -182,23 +206,38 @@ class MainApp(AppBase):
             self.matrix.Clear()
 
     def stop_running_app(self):
+        """
+        Attempt to stop the current running child app
+        """
         if self.running_app is not None:
             self.running_app.stop()
 
     def reload_running_app(self):
+        """
+        Attempt to reload the current running child app once stopped
+        """
         self.restart_app = True
 
     def _start_app(self, index):
+        """
+        Start a new child app based on index in "screen_order.txt"
+        """
         self.current_screen_index = self.screen_index = index
         screen_name = self.screen_order[self.screen_index]
         self.current_screen_name = screen_name
         self._start_app_by_name(screen_name)
 
     def wait_for_complete(self):
+        """
+        Wait for the current child app to finish stopping
+        """
         while self.running_app:
             time.sleep(1)
 
     def run(self):
+        """
+        Main routine to start up child apps as needed
+        """
         while True:
             if self.current_screen_index != self.screen_index or self.restart_app:
                 self.stop_running_app()
@@ -208,6 +247,9 @@ class MainApp(AppBase):
                 time.sleep(1)
 
 def main():
+    """
+    Begin main app execution
+    """
     main_app = MainApp()
     main_app.start()
 

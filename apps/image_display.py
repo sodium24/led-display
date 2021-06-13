@@ -33,10 +33,19 @@ import datetime
 from app_base import AppBase
 
 class ImageDisplay(AppBase):
+    """
+    Customizable app to display images, text, clock, etc
+    """
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the app
+        """
         super(ImageDisplay, self).__init__(*args, **kwargs)
 
     def run(self):
+        """
+        Load configuration and display the result
+        """
         static_display = True
         clocks = []
 

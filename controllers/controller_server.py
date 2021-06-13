@@ -38,9 +38,16 @@ from controller_base import ControllerBase
 from controllers.stream_message import StreamMessage
 
 class ControllerServer(ControllerBase):
+    """
+    TCP Server class to enable interacting with the LED display
+    """
+
     PORT = 1337
 
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the server
+        """
         super(ControllerServer, self).__init__(*args, **kwargs)
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -60,6 +67,9 @@ class ControllerServer(ControllerBase):
         }
 
     def run(self):
+        """
+        Main server run loop routine
+        """
         self.socket.listen(1)
 
         while not self.exit_flag:
@@ -75,34 +85,61 @@ class ControllerServer(ControllerBase):
             conn.close()
 
     def on_ping(self, data):
+        """
+        Handle a ping request from the client
+        """
         return {}
 
     def on_get_state(self, data):
+        """
+        Handle an app state request from the client
+        """
         return self.get_state()
 
     def on_get_config(self, data):
+        """
+        Handle a retrieve app configuration request from the client
+        """
         return {"config": self.get_config()}
 
     def on_set_config(self, data):
+        """
+        Handle a set app configuration request from the client
+        """
         self.set_config(data["config"])
         return {}
 
     def on_save_config(self, data):
+        """
+        Handle a set and save app configuration request from the client
+        """
         self.save_config(data["config"])
         return {}
 
     def on_input_event(self, data):
+        """
+        Handle input event injection from the client
+        """
         handled = self.send_input_event(data["input_event"])
         return {"handled": handled}
 
     def on_joystick_press(self, data):
+        """
+        Handle joystick button press injection from the client
+        """
         handled = self.send_joystick_press(data["button"], data["button_states"])
         return {"handled": handled}
 
     def on_joystick_release(self, data):
+        """
+        Handle joystick button release injection from the client
+        """
         handled = self.send_joystick_release(data["button"], data["button_states"])
         return {"handled": handled}
 
     def on_joystick_axis(self, data):
+        """
+        Handle joystick axis event injection from the client
+        """
         handled = self.send_joystick_axis(data["axis_states"])
         return {"handled": handled}

@@ -32,54 +32,96 @@ import weakref
 import threading
 
 class ControllerBase(object):
+    """
+    Base class to be implemented by all controllers
+    """
     def __init__(self, config, main_app):
+        """
+        Initialize a controller
+        """
         self.config = config
         self.main_app = weakref.ref(main_app)
         self.controller_thread = None
         self.exit_flag = False
 
     def start(self):
+        """
+        Start the controller running
+        """
         self.controller_thread = threading.Thread(target=self.run)
         self.controller_thread.daemon = True
         self.controller_thread.start()
 
     def stop(self):
+        """
+        Stop a running controller
+        """
         if self.controller_thread is not None:
             self.exit_flag = True
             self.controller_thread.join()
             self.controller_thread = None
 
     def get_state(self):
+        """
+        Controller function to retrieve the app state
+        """
         return self.main_app().get_state()
 
     def get_config(self):
+        """
+        Controller function to retrieve configuration
+        """
         return self.main_app().config
 
     def set_config(self, config):
+        """
+        Controller function to set configuration
+        """
         self.main_app().config = config
         self.main_app().reload_running_app()
         return True
 
     def save_config(self, config):
+        """
+        Controller function to set and save configuration
+        """
         self.main_app().config = config
         self.main_app().reload_running_app()
         self.main_app().save_config()
         return True
 
     def send_input_event(self, input_event):
+        """
+        Controller function to inject an input event
+        """
         return self.main_app().on_input_event(input_event)
 
     def send_joystick_press(self, button, button_states):
+        """
+        Controller function to inject a joystick button press
+        """
         return self.main_app().on_joystick_press(button, button_states)
 
     def send_joystick_release(self, button, button_states):
+        """
+        Controller function to inject a joystick button release
+        """
         return self.main_app().on_joystick_release(button, button_states)
 
     def send_joystick_axis(self, axis_states):
+        """
+        Controller function to inject joystick axis data
+        """
         return self.main_app().on_joystick_axis(axis_states)
 
     def enter_sleep_mode(self):
+        """
+        Controller function to turn off the LED display
+        """
         self.main_app().enter_sleep_mode()
 
     def run(self):
+        """
+        Main controller run routine, to be implemented by the controller
+        """
         return

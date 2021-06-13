@@ -33,14 +33,24 @@ import struct
 import json
 
 class StreamMessage(object):
+    """
+    JSON serialization helper for a TCP interface
+    """
+
     @staticmethod
     def send(data_json, sock):
+        """
+        Send serialized JSON data over a TCP socket
+        """
         str_data = json.dumps(data_json)
         binary_data = struct.pack("<I", len(str_data)) + str_data.encode()
         sock.sendall(binary_data)
 
     @staticmethod
     def recv(sock):
+        """
+        Received serialized JSON data from a TCP socket
+        """
         length_buf = b''
 
         while len(length_buf) < 4:

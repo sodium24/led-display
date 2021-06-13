@@ -43,10 +43,21 @@ def has_js():
     return False
 
 class JoystickController(ControllerBase):
+    """
+    Controller for a joystick to interact with the LED display
+    """
+
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the joystick controller
+        """
         super(JoystickController, self).__init__(*args, **kwargs)
 
     def run(self):
+        """
+        Main joystick controller run loop, to keep detecting joystick
+        presence, and when it connects, listen for input events
+        """
         while not self.exit_flag:
             while not has_js():
                 time.sleep(1)

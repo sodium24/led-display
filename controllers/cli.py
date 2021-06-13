@@ -33,6 +33,10 @@ from controllerclient import ControllerClient
 controller = ControllerClient()
 
 class LedDisplayCli(cmd.Cmd):
+    """
+    CLI for interacting with the LED display over TCP
+    """
+
     intro = "LED Display CLI\n\nType help or ? to list commands.\n"
     prompt = 'led-display> '
     file = None

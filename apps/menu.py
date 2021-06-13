@@ -33,7 +33,13 @@ import threading
 from app_base import AppBase
 
 class Menu(AppBase):
+    """
+    Customizable menu for listing apps and allowing a user selection
+    """
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the app
+        """
         super(Menu, self).__init__(*args, **kwargs)
 
         self.menu_row = 0
@@ -51,6 +57,9 @@ class Menu(AppBase):
         self.redraw_lock = threading.Lock()
 
     def stop(self):
+        """
+        Stop the app from running, including any running child app
+        """
         super(Menu, self).stop()
 
         # Pass on the signal to a running app
@@ -58,6 +67,9 @@ class Menu(AppBase):
             self.running_app.stop()
 
     def on_input_event(self, input_event):
+        """
+        Handle an input event. Return true if handled.
+        """
         handled = False
 
         if not handled and self.running_app is not None:
@@ -84,6 +96,9 @@ class Menu(AppBase):
         return handled
 
     def on_joystick_press(self, button, button_states):
+        """
+        Handle a joystick press. Return true if handled.
+        """
         handled = False
 
         if not handled and self.running_app is not None:
@@ -95,6 +110,9 @@ class Menu(AppBase):
         return handled
 
     def on_joystick_release(self, button, button_states):
+        """
+        Handle a joystick release. Return true if handled.
+        """
         handled = False
 
         if not handled and self.running_app is not None:
@@ -106,6 +124,9 @@ class Menu(AppBase):
         return handled
 
     def on_joystick_axis(self, axis_states):
+        """
+        Handle a joystick axis event. Return true if handled.
+        """
         handled = False
 
         if not handled and self.running_app is not None:
@@ -117,6 +138,9 @@ class Menu(AppBase):
         return handled
 
     def redraw(self):
+        """
+        Update the menu display and redraw it on the LED display
+        """
         with self.redraw_lock:
             selected_row = self.menu_row
 
@@ -136,12 +160,18 @@ class Menu(AppBase):
             self.draw()
 
     def _start_app(self, index):
+        """
+        Start a new child app based on index in on the display
+        """
         self.selected_app = index
         screen_name = self.menu_items[self.selected_app][1]
         self.current_screen_name = screen_name
         self._start_app_by_name(screen_name)
 
     def run(self):
+        """
+        Main routine to setup the menu and allow user selection
+        """
         y = 0
 
         menu_title = self.create_control("text", "menu_title")

@@ -37,11 +37,17 @@ from app_base import AppBase
 from rgbmatrix import graphics
 
 class SnakeBody(object):
+    """
+    Object containing the coordinates of part of a snake
+    """
     def __init__(self):
         self.row = -1
         self.col = -1
 
 class SnakeInfo(object):
+    """
+    Object containing information about a snake's position and status
+    """
     def __init__(self):
         self.head = 0
         self.length = 0
@@ -62,6 +68,7 @@ NEXT_LEVEL = 3
 arena = [[0 for x in range(64)] for y in range(64)]
 current_level = 0
 
+# Color configuration
 ledColors = [
     (255, 255, 0),   # snake 1
     (0, 255, 255),   # snake 2 (unused)

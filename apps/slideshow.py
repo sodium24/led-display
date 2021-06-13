@@ -34,10 +34,20 @@ import os
 from app_base import AppBase
 
 class Slideshow(AppBase):
+    """
+    App to display a collection of pictures
+    """
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the app
+        """
         super(Slideshow, self).__init__(*args, **kwargs)
 
     def run(self):
+        """
+        Main routine to load pictures from folders based on the app configuration,
+        and display them in sequence on the LED display
+        """
         files = []
         image_controls = []
         for folder in self.app_config["folders"]:

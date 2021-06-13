@@ -30,9 +30,18 @@
 from app_base import AppBase
 
 class DisplayOff(AppBase):
+    """
+    App to power off the LED display
+    """
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the app
+        """
         super(DisplayOff, self).__init__(*args, **kwargs)
 
     def run(self):
+        """
+        Main routine to power off the LED display
+        """
         self.matrix.Clear()
         self.enter_sleep_mode()

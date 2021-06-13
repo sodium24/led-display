@@ -109,7 +109,14 @@ button_names = {
 }
 
 class Joystick():
+    """
+    Joystick device interface
+    """
     def __init__(self, name):
+        """
+        Initialize the joystick device. Handlers "on_press", "on_release",
+        and "on_axis" can be set to receive joystick data.
+        """
         self.name = name
         self.axis_states = {}
         self.button_states = {}
@@ -128,12 +135,17 @@ class Joystick():
         self.event_thread.start()
 
     def terminate(self):
+        """
+        Terminate the joystick device
+        """
         self.exit_flag = True
         if self.event_thread:
             self.event_thread.join()
 
     def event_loop(self):
-        # Main event loop
+        """
+        Main event loop to listen for joystick events
+        """
         try:
             print('Opening %s...' % self.name)
             with open(self.name, 'rb') as jsdev:

@@ -36,6 +36,10 @@ from controller_client import ControllerClient
 from multiprocessing import Process
 
 def web_process(ip, port, debug):
+    """
+    Website interface for the LED display
+    """
+
     app = Flask(__name__)
 
     controller = ControllerClient()
@@ -110,10 +114,20 @@ def web_process(ip, port, debug):
     app.run(host=ip, port=port, debug=debug)
 
 class WebController(ControllerBase):
+    """
+    Website controller for the LED display
+    """
+
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the website controller
+        """
         super(WebController, self).__init__(*args, **kwargs)
 
     def start(self):
+        """
+        Start the website interface based on configuration options
+        """
         ip = self.config["settings"].get("webInterfaceIp", "0.0.0.0")
         port = self.config["settings"].get("webInterfacePort", 8080)
         debug = self.config["settings"].get("webInterfaceDebug", True)
@@ -121,6 +135,9 @@ class WebController(ControllerBase):
         self.process.start()
 
     def stop(self):
+        """
+        Stop the website interface
+        """
         self.process.terminate()
         self.process.join()
 

@@ -29,15 +29,27 @@
 ################################################################################
 
 class JoystickTranslator(object):
+    """
+    Translate from joystick data to recognizable input commands
+    """
     def __init__(self):
+        """
+        Initialize the translator
+        """
         self.current_action = (None, 0.0)
         self.button_states = {}
 
     def on_joystick_press(self, button, button_states):
+        """
+        Handle a joystick button press, and return an input event if one exists
+        """
         self.button_states = dict(button_states)
         return None
 
     def on_joystick_release(self, button, button_states):
+        """
+        Handle a joystick button release, and return an input event if one exists
+        """
         input_event = None
         if button == "a" and self.button_states.get("a"):
             input_event = "select"
@@ -47,6 +59,9 @@ class JoystickTranslator(object):
         return input_event
 
     def on_joystick_axis(self, axis_states):
+        """
+        Handle a joystick axis event, and return an input event if one exists
+        """
         input_event = None
         max_axis = None
         max_val = 0.0
