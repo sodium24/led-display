@@ -37,6 +37,9 @@ class ControllerClient(object):
     def send_joystick_release(self, button, button_states):
         return self.send_sync_command("joystick_release", {"button": button, "button_states": button_states})
 
+    def send_joystick_axis(self, axis_states):
+        return self.send_sync_command("joystick_axis", {"axis_states": axis_states})
+
     def send_sync_command(self, command_type, data):
         data["type"] = command_type
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -45,3 +48,4 @@ class ControllerClient(object):
         response = StreamMessage.recv(sock)
         sock.close()
         return response
+

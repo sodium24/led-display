@@ -1,28 +1,44 @@
-import addons
 import sys
 import json
 import threading
 import time
-import appbase
-import controllerserver
 import os
+import addons
+import appbase
+import joystick_translator
 
 class MainApp(appbase.AppBase):
     def __init__(self, json_file):
+        # Cache of loaded fonts
         self.loaded_fonts = {}
+
+        # Load the JSON configuration file
         self.json_file = json_file
         with open(self.json_file) as f:
             config = json.loads(f.read())
 
+        # AppBase initialization
         super(MainApp, self).__init__(config, config, self.loaded_fonts)
 
         self.config = config
         self.current_screen_index = -1
         self.current_screen_name = ""
         self.screen_index = 0
-        self.controller = controllerserver.ControllerServer(self)
-        self.controller.start()
         self.restart_app = False
+
+        # Translate joystick data to input events
+        self.joystick_translator = joystick_translator.JoystickTranslator()
+
+        # Load controllers
+        self.controllers = []
+        for controller_name in addons.controllers:
+            print("Starting controller %s..." % controller_name) 
+            controller = addons.controllers[controller_name](self.config, self)
+            controller.start()
+            self.controllers += [controller]
+
+    def get_state(self):
+        return {"screenIndex": self.current_screen_index, "screenName": self.current_screen_name}
 
     def save_config(self):
         try:
@@ -53,6 +69,59 @@ class MainApp(appbase.AppBase):
                 self.screen_index %= len(self.config["screenOrder"])
                 self.stop_running_app()
                 handled = True
+
+        if not handled:
+            handled = super(MainApp, self).on_input_event(input_event)
+
+        return handled
+
+    def on_joystick_press(self, button, button_states):
+        handled = False
+
+        input_event = self.joystick_translator.on_joystick_press(button, button_states)
+
+        if not handled and self.running_app is not None:
+            handled = self.running_app.on_joystick_press(button, button_states)
+
+        if not handled:
+            handled = super(MainApp, self).on_joystick_press(button, button_states)
+
+        if not handled and input_event is not None:
+            return self.on_input_event(input_event)
+
+        return handled
+
+    def on_joystick_release(self, button, button_states):
+        handled = False
+
+        input_event = self.joystick_translator.on_joystick_release(button, button_states)
+
+        if not handled and self.running_app is not None:
+            handled = self.running_app.on_joystick_release(button, button_states)
+
+        if not handled:
+            handled = super(MainApp, self).on_joystick_release(button, button_states)
+
+        print("on_joystick_release", input_event)
+
+        if not handled and input_event is not None:
+            return self.on_input_event(input_event)
+
+        return handled
+
+    def on_joystick_axis(self, axis_states):
+        handled = False
+
+        input_event = self.joystick_translator.on_joystick_axis(axis_states)
+
+        if not handled and self.running_app is not None:
+            handled = self.running_app.on_joystick_axis(axis_states)
+
+        if not handled:
+            handled = super(MainApp, self).on_joystick_axis(axis_states)
+
+        if not handled and input_event is not None:
+            return self.on_input_event(input_event)
 
         return handled
 

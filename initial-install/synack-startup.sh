@@ -11,8 +11,8 @@
 trap "exit" INT TERM ERR
 trap "kill 0" EXIT
 
-# Run the joystick controller
-python /home/pi/led-display/controllers/joystick_controller.py &
+# Run the web controller
+python /home/pi/led-display/controllers/web_controller.py &
 
 # Run the default startup program!
 sudo python /home/pi/led-display/mainapp.py /home/pi/synack-config.json

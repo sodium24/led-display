@@ -22,7 +22,6 @@ class AppBase(object):
         }
         self.matrix = matrix
         self.next_z_index = 0
-        self._button_states = {}
         self.on_app_exit = None
 
         # To enable running a child app
@@ -52,6 +51,9 @@ class AppBase(object):
     def _delete_control(control_id):
         if control_id in self.controls:
             del self.controls[control_id]
+
+    def get_state(self):
+        return {}
 
     def update(self, directToMatrix = False):
         canvas = self.matrix if directToMatrix else self.offscreen_canvas
@@ -87,15 +89,12 @@ class AppBase(object):
         return False
 
     def on_joystick_press(self, button, button_states):
-        self._button_states = button_states
         return False
 
     def on_joystick_release(self, button, button_states):
-        if button == "a" and self._button_states.get("a"):
-            self.on_input_event("select")
-        if button == "b" and self._button_states.get("b"):
-            self.on_input_event("exit")
-        self._button_states = button_states
+        return False
+
+    def on_joystick_axis(self, axis_states):
         return False
 
     def run(self):

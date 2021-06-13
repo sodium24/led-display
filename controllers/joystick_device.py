@@ -147,12 +147,9 @@ class Joystick():
                 if evbuf:
                     time, value, type, number = struct.unpack('IhBB', evbuf)
 
-                    if type & 0x80:
-                         print("(initial)")
-
                     if type & 0x01:
                         button = self.button_map[number]
-                        if button:
+                        if button and self.button_states.get(button) != value:
                             self.button_states[button] = value
                             if value:
                                 print("%s pressed" % (button))
@@ -163,14 +160,18 @@ class Joystick():
                                 if self.on_release:
                                     self.on_release(button, self.button_states)
 
+                    axis_updated = False
                     if type & 0x02:
                         axis = self.axis_map[number]
-                        if axis:
-                            fvalue = value / 32767.0
+                        fvalue = value / 32767.0
+                        if axis and self.axis_states.get(axis) != fvalue:
                             self.axis_states[axis] = fvalue
                             #print("%s: %.3f" % (axis, fvalue))
-                            if self.on_axis:
-                                self.on_axis(axis, self.axis_states)
+                            axis_updated = True
+
+                    if axis_updated and self.on_axis:
+                        self.on_axis(self.axis_states)
+
         except Exception as err:
             print("Exception: %s" % err)
             self.failed = True

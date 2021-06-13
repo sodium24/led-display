@@ -8,7 +8,7 @@ class StreamMessage(object):
     def send(data_json, sock):
         str_data = json.dumps(data_json)
         binary_data = struct.pack("<I", len(str_data)) + str_data.encode()
-        sock.send(binary_data)
+        sock.sendall(binary_data)
 
     @staticmethod
     def recv(sock):

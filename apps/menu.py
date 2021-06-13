@@ -49,6 +49,42 @@ class Menu(AppBase):
                 self.selected_app = self.menu_row
                 handled = True
 
+        if not handled:
+            handled = super(Menu, self).on_input_event(input_event)
+
+        return handled
+
+    def on_joystick_press(self, button, button_states):
+        handled = False
+
+        if not handled and self.running_app is not None:
+            handled = self.running_app.on_joystick_press(button, button_states)
+
+        if not handled:
+            handled = super(Menu, self).on_joystick_press(button, button_states)
+
+        return handled
+
+    def on_joystick_release(self, button, button_states):
+        handled = False
+
+        if not handled and self.running_app is not None:
+            handled = self.running_app.on_joystick_release(button, button_states)
+
+        if not handled:
+            handled = super(Menu, self).on_joystick_release(button, button_states)
+
+        return handled
+
+    def on_joystick_axis(self, axis_states):
+        handled = False
+
+        if not handled and self.running_app is not None:
+            handled = self.running_app.on_joystick_axis(axis_states)
+
+        if not handled:
+            handled = super(Menu, self).on_joystick_axis(axis_states)
+
         return handled
 
     def redraw(self):
