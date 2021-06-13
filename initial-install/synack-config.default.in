@@ -63,6 +63,13 @@
                 ]
             }
         },
+        "snake": {
+           "app": "snake",
+           "config": {
+               "speed": 100,
+               "increaseSpeed": false
+           }
+        },
         "menu": {
             "app": "menu",
             "config": {
@@ -77,8 +84,8 @@
                 "selected_fgcolor": [0, 0, 0],
                 "menu": [
                     {
-                        "text": "SYNACK",
-                        "screen": "synackDisplay"
+                        "text": "SNAKE",
+                        "screen": "snake"
                     },
                     {
                         "text": "TURN OFF",
@@ -88,5 +95,5 @@
             }
         }
     },
-    "screenOrder": ["synackDisplay", "menu", "off"]
+    "screenOrder": ["synackDisplay", "menu"]
 }
