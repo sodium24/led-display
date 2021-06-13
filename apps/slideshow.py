@@ -77,7 +77,7 @@ class Slideshow(AppBase):
             self.draw()
 
             # display for a delay
-            if self.stop_event.wait(5.0):
+            if self.stop_event.wait(self.app_config["delay"]):
                 break
 
             # go on to the next picture
