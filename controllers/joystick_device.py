@@ -119,40 +119,6 @@ class Joystick():
         self.exit_flag = False
         self.failed = False
 
-        print('Opening %s...' % name)
-        self.jsdev = open(name, 'rb')
-        print('Opened %s' % name)
-
-        # Get number of axes and buttons.
-        buf = array.array('B', [0])
-        ioctl(self.jsdev, 0x80016a11, buf) # JSIOCGAXES
-        self.num_axes = buf[0]
-
-        buf = array.array('B', [0])
-        ioctl(self.jsdev, 0x80016a12, buf) # JSIOCGBUTTONS
-        self.num_buttons = buf[0]
-
-        # Get the axis map.
-        buf = array.array('B', [0] * 0x40)
-        ioctl(self.jsdev, 0x80406a32, buf) # JSIOCGAXMAP
-
-        for axis in buf[:self.num_axes]:
-            axis_name = axis_names.get(axis, 'unknown(0x%02x)' % axis)
-            self.axis_map.append(axis_name)
-            self.axis_states[axis_name] = 0.0
-
-        # Get the button map.
-        buf = array.array('H', [0] * 200)
-        ioctl(self.jsdev, 0x80406a34, buf) # JSIOCGBTNMAP
-
-        for btn in buf[:self.num_buttons]:
-            btn_name = button_names.get(btn, 'unknown(0x%03x)' % btn)
-            self.button_map.append(btn_name)
-            self.button_states[btn_name] = 0
-
-        print('%d axes found: %s' % (self.num_axes, ', '.join(self.axis_map)))
-        print('%d buttons found: %s' % (self.num_buttons, ', '.join(self.button_map)))
-
         self.on_press = None
         self.on_release = None
         self.on_axis = None
@@ -163,42 +129,75 @@ class Joystick():
 
     def terminate(self):
         self.exit_flag = True
-        self.jsdev.close()
         if self.event_thread:
             self.event_thread.join()
 
     def event_loop(self):
         # Main event loop
         try:
-            while not self.exit_flag:
-                evbuf = self.jsdev.read(8)
-                if evbuf:
-                    time, value, type, number = struct.unpack('IhBB', evbuf)
+            print('Opening %s...' % self.name)
+            with open(self.name, 'rb') as jsdev:
+                print('Opened %s' % self.name)
 
-                    if type & 0x01:
-                        button = self.button_map[number]
-                        if button and self.button_states.get(button) != value:
-                            self.button_states[button] = value
-                            if value:
-                                print("%s pressed" % (button))
-                                if self.on_press:
-                                    self.on_press(button, self.button_states)
-                            else:
-                                print("%s released" % (button))
-                                if self.on_release:
-                                    self.on_release(button, self.button_states)
+                # Get number of axes and buttons.
+                buf = array.array('B', [0])
+                ioctl(jsdev, 0x80016a11, buf) # JSIOCGAXES
+                self.num_axes = buf[0]
 
-                    axis_updated = False
-                    if type & 0x02:
-                        axis = self.axis_map[number]
-                        fvalue = value / 32767.0
-                        if axis and self.axis_states.get(axis) != fvalue:
-                            self.axis_states[axis] = fvalue
-                            #print("%s: %.3f" % (axis, fvalue))
-                            axis_updated = True
+                buf = array.array('B', [0])
+                ioctl(jsdev, 0x80016a12, buf) # JSIOCGBUTTONS
+                self.num_buttons = buf[0]
 
-                    if axis_updated and self.on_axis:
-                        self.on_axis(self.axis_states)
+                # Get the axis map.
+                buf = array.array('B', [0] * 0x40)
+                ioctl(jsdev, 0x80406a32, buf) # JSIOCGAXMAP
+
+                for axis in buf[:self.num_axes]:
+                    axis_name = axis_names.get(axis, 'unknown(0x%02x)' % axis)
+                    self.axis_map.append(axis_name)
+                    self.axis_states[axis_name] = 0.0
+
+                # Get the button map.
+                buf = array.array('H', [0] * 200)
+                ioctl(jsdev, 0x80406a34, buf) # JSIOCGBTNMAP
+
+                for btn in buf[:self.num_buttons]:
+                    btn_name = button_names.get(btn, 'unknown(0x%03x)' % btn)
+                    self.button_map.append(btn_name)
+                    self.button_states[btn_name] = 0
+
+                print('%d axes found: %s' % (self.num_axes, ', '.join(self.axis_map)))
+                print('%d buttons found: %s' % (self.num_buttons, ', '.join(self.button_map)))
+
+                while not self.exit_flag:
+                    evbuf = jsdev.read(8)
+                    if evbuf:
+                        time, value, type, number = struct.unpack('IhBB', evbuf)
+
+                        if type & 0x01:
+                            button = self.button_map[number]
+                            if button and self.button_states.get(button) != value:
+                                self.button_states[button] = value
+                                if value:
+                                    print("%s pressed" % (button))
+                                    if self.on_press:
+                                        self.on_press(button, self.button_states)
+                                else:
+                                    print("%s released" % (button))
+                                    if self.on_release:
+                                        self.on_release(button, self.button_states)
+
+                        axis_updated = False
+                        if type & 0x02:
+                            axis = self.axis_map[number]
+                            fvalue = value / 32767.0
+                            if axis and self.axis_states.get(axis) != fvalue:
+                                self.axis_states[axis] = fvalue
+                                #print("%s: %.3f" % (axis, fvalue))
+                                axis_updated = True
+
+                        if axis_updated and self.on_axis:
+                            self.on_axis(self.axis_states)
 
         except Exception as err:
             print("Exception: %s" % err)

@@ -27,10 +27,10 @@
 #
 ################################################################################
 
-from appbase import AppBase
 import time
 import datetime
 import threading
+from app_base import AppBase
 
 class Menu(AppBase):
     def __init__(self, *args, **kwargs):
@@ -198,6 +198,7 @@ class Menu(AppBase):
                     print("Exception while running app: %s" % err)
                     self.selected_app = None
                     self.running_app = None
+                self.redraw()
             else:
                 if is_static:
                     time.sleep(1)

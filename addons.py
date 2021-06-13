@@ -33,8 +33,9 @@ from apps.slideshow import Slideshow
 from apps.menu import Menu
 from apps.snake import SnakeGame
 
-from controllers.controllerserver import ControllerServer
+from controllers.controller_server import ControllerServer
 from controllers.joystick_controller import JoystickController
+from controllers.web_controller import WebController
 
 # List of installed apps
 
@@ -46,9 +47,10 @@ apps = {
     "snake": SnakeGame,
 }
 
-# List of installed controllers, not including ones which run as a separate process (like web)
+# List of installed controllers
 
 controllers = {
     "tcp": ControllerServer,
     "joystick": JoystickController,
+    "web": WebController
 }

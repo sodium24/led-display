@@ -1,5 +1,5 @@
 ################################################################################
-# controllerserver.py
+# controller_server.py
 #-------------------------------------------------------------------------------
 # TCP server class to allow client connections for interacting with the LED
 # display.
@@ -34,8 +34,8 @@ import threading
 import json
 import socket
 import weakref
-from controllerbase import ControllerBase
-from controllers.streammessage import StreamMessage
+from controller_base import ControllerBase
+from controllers.stream_message import StreamMessage
 
 class ControllerServer(ControllerBase):
     PORT = 1337

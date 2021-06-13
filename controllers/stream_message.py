@@ -1,5 +1,5 @@
 ################################################################################
-# streammessage.py
+# stream_message.py
 #------------------------------------------------------------------------------
 # Class to serialize and deserialize JSON data to be sent over a TCP socket.
 # This is a simple alternative to ZMQ, due to its extremely long installation

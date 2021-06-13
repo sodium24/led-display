@@ -33,7 +33,7 @@ import time
 import fcntl
 import joystick_device
 import weakref
-from controllerbase import ControllerBase
+from controller_base import ControllerBase
 
 def has_js():
     for filename in os.listdir('/dev/input'):
@@ -47,8 +47,6 @@ class JoystickController(ControllerBase):
         super(JoystickController, self).__init__(*args, **kwargs)
 
     def run(self):
-        print("starting joystick controller...")
-
         while not self.exit_flag:
             while not has_js():
                 time.sleep(1)

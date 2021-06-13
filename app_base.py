@@ -1,5 +1,5 @@
 ################################################################################
-# appbase.py
+# app_base.py
 #-------------------------------------------------------------------------------
 # Base class for an app running on the LED display application framework.
 #
@@ -31,8 +31,8 @@ import argparse
 import time
 import sys
 import os
-import appcontrols
 import weakref
+import app_controls
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
 
@@ -44,10 +44,10 @@ class AppBase(object):
         self.stop_flag = False
         self.controls = {}
         self.control_classes = {
-            "fill": appcontrols.FillControl,
-            "text": appcontrols.TextControl,
-            "image": appcontrols.ImageControl,
-            "rect": appcontrols.RectControl,
+            "fill": app_controls.FillControl,
+            "text": app_controls.TextControl,
+            "image": app_controls.ImageControl,
+            "rect": app_controls.RectControl,
         }
         self.matrix = matrix
         self.next_z_index = 0
@@ -139,14 +139,15 @@ class AppBase(object):
             print("Starting app for screen " + screen_name)
             print("Press CTRL-C to stop...")
             self.running_app.start()
-            print("Execution complete")
+            print("Execution complete for screen " + screen_name)
         except Exception as err:
             print("Exception while running app: %s" % err)
 
         self.running_app = None
 
     def stop(self):
-        self.stop_flag = True
+        if self.parent_app is not None:
+            self.stop_flag = True
 
     def start(self):
         if self.matrix is None:
@@ -172,6 +173,9 @@ class AppBase(object):
                 options.gpio_slowdown = self.config["display"]["ledSlowdownGpio"]
             if self.config["display"].get("ledNoHardwarePulse") != None:
                 options.disable_hardware_pulsing = self.config["display"]["ledNoHardwarePulse"]
+
+            # Dropping privileges makes other things fail
+            options.drop_privileges = False
 
             self.matrix = RGBMatrix(options = options)
 

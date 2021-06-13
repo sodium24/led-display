@@ -1,5 +1,5 @@
 ################################################################################
-# appcontrols.py
+# app_controls.py
 #-------------------------------------------------------------------------------
 # Control elements an app may use to simplify interacting with the LED display 
 # directly.

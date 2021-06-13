@@ -28,10 +28,10 @@
 #
 ################################################################################
 
-from appbase import AppBase
 import time
 import datetime
 import os
+from app_base import AppBase
 
 class Slideshow(AppBase):
     def __init__(self, *args, **kwargs):

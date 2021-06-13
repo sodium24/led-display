@@ -28,9 +28,9 @@
 #
 ################################################################################
 
-from appbase import AppBase
 import time
 import datetime
+from app_base import AppBase
 
 class ImageDisplay(AppBase):
     def __init__(self, *args, **kwargs):

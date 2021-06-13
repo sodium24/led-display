@@ -1,5 +1,5 @@
 ################################################################################
-# mainapp.py
+# main_app.py
 #-------------------------------------------------------------------------------
 # Application framework for running apps on an LED display.
 # 
@@ -33,10 +33,10 @@ import threading
 import time
 import os
 import addons
-import appbase
-import joystick_translator
+from app_base import AppBase
+import controllers.joystick_translator
 
-class MainApp(appbase.AppBase):
+class MainApp(AppBase):
     def __init__(self, json_file):
         # Cache of loaded fonts
         self.loaded_fonts = {}
@@ -56,7 +56,7 @@ class MainApp(appbase.AppBase):
         self.restart_app = False
 
         # Translate joystick data to input events
-        self.joystick_translator = joystick_translator.JoystickTranslator()
+        self.joystick_translator = controllers.joystick_translator.JoystickTranslator()
 
         # Load controllers
         self.controllers = []
@@ -101,6 +101,10 @@ class MainApp(appbase.AppBase):
 
         if not handled:
             handled = super(MainApp, self).on_input_event(input_event)
+
+        if not handled:
+            if not self.running_app:
+                self.reload_running_app()
 
         return handled
 

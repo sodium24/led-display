@@ -1,8 +1,7 @@
 ################################################################################
-# controllerbase.py
+# controller_client.py
 #-------------------------------------------------------------------------------
-# Base class for a controller to interact with the LED display application 
-# framework.
+# TCP client class for interacting with the LED display.
 # 
 # By Malcolm Stagg
 #
@@ -28,58 +27,54 @@
 #
 ################################################################################
 
-import weakref
+import socket
+import sys
+import os
 import threading
+import socket
+import json
+import time
+from stream_message import StreamMessage
 
-class ControllerBase(object):
-    def __init__(self, config, main_app):
-        self.config = config
-        self.main_app = weakref.ref(main_app)
-        self.controller_thread = None
-        self.exit_flag = False
+class ControllerClient(object):
+    PORT = 1337
 
-    def start(self):
-        self.controller_thread = threading.Thread(target=self.run)
-        self.controller_thread.daemon = True
-        self.controller_thread.start()
+    def __init__(self, ip="localhost"):
+        self.ip = ip
 
-    def stop(self):
-        if self.controller_thread is not None:
-            self.exit_flag = True
-            self.controller_thread.join()
-            self.controller_thread = None
+    def check_connected(self):
+        return self.send_sync_command("ping", {})
 
     def get_state(self):
-        return self.main_app().get_state()
+        return self.send_sync_command("get_state", {})
 
     def get_config(self):
-        return self.main_app().config
+        return self.send_sync_command("get_config", {})
 
     def set_config(self, config):
-        self.main_app().config = config
-        self.main_app().reload_running_app()
-        return True
+        return self.send_sync_command("set_config", {"config": config})
 
     def save_config(self, config):
-        self.main_app().config = config
-        self.main_app().reload_running_app()
-        self.main_app().save_config()
-        return True
+        return self.send_sync_command("save_config", {"config": config})
 
     def send_input_event(self, input_event):
-        return self.main_app().on_input_event(input_event)
+        return self.send_sync_command("input_event", {"input_event": input_event})
 
     def send_joystick_press(self, button, button_states):
-        return self.main_app().on_joystick_press(button, button_states)
+        return self.send_sync_command("joystick_press", {"button": button, "button_states": button_states})
 
     def send_joystick_release(self, button, button_states):
-        return self.main_app().on_joystick_release(button, button_states)
+        return self.send_sync_command("joystick_release", {"button": button, "button_states": button_states})
 
     def send_joystick_axis(self, axis_states):
-        return self.main_app().on_joystick_axis(axis_states)
+        return self.send_sync_command("joystick_axis", {"axis_states": axis_states})
 
-    def enter_sleep_mode(self):
-        self.main_app().enter_sleep_mode()
+    def send_sync_command(self, command_type, data):
+        data["type"] = command_type
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((self.ip, self.PORT))
+        StreamMessage.send(data, sock)
+        response = StreamMessage.recv(sock)
+        sock.close()
+        return response
 
-    def run(self):
-        return

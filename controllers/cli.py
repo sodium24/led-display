@@ -27,10 +27,10 @@
 #
 ################################################################################
 
-import controllerclient
 import cmd
+from controllerclient import ControllerClient
 
-controller = controllerclient.ControllerClient()
+controller = ControllerClient()
 
 class LedDisplayCli(cmd.Cmd):
     intro = "LED Display CLI\n\nType help or ? to list commands.\n"

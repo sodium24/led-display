@@ -33,7 +33,7 @@
 import time
 import random
 import threading
-from appbase import AppBase
+from app_base import AppBase
 from rgbmatrix import graphics
 
 class SnakeBody(object):
@@ -276,7 +276,7 @@ def PlayGame(display_handler, input_handler, speed, increase_speed):
             pause = input_handler.button_state('b')
             exit_now = input_handler.button_state('start')
 
-            if axis_x is not None or axis_y is not None or pause:
+            if axis_x is not None and axis_y is not None:
                 # Use the joystick
                 if axis_y < -0.5 and abs(axis_y) > abs(axis_x):   # up
                     if snake.direction != 2:
@@ -430,10 +430,15 @@ def StillWantsToPlay(display_handler, input_handler):
         time.sleep(0.1)
 
     if input_handler.button_state('a') or input_event == "select":
-        return True
+        selection = True
     else:
         display_handler.Clear()
-        return False
+        selection = False
+
+    while input_handler.button_state('a') or input_handler.button_state('b') or input_handler.button_state('start'):
+        time.sleep(0.1)
+
+    return selection
 
 class DisplayHandler(object):
     """

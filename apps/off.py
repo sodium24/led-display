@@ -27,7 +27,7 @@
 #
 ################################################################################
 
-from appbase import AppBase
+from app_base import AppBase
 
 class DisplayOff(AppBase):
     def __init__(self, *args, **kwargs):
