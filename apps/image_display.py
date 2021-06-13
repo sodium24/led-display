@@ -91,6 +91,7 @@ class ImageDisplay(AppBase):
                     static_display = False
 
         while not self.stop_event.wait(0.1):
+            # update the time on any clocks
             time_val = datetime.datetime.now()
             for clock in clocks:
                 clock["control"].text = time_val.strftime(clock["format"])
