@@ -27,7 +27,7 @@ class Slideshow(AppBase):
 
         current_indx = 0
 
-        while len(image_controls) > 0 and not self.stopFlag:
+        while len(image_controls) > 0 and not self.stop_flag:
             image_controls[current_indx].enabled = True
 
             # update the display buffer with image data from the controls
@@ -37,7 +37,7 @@ class Slideshow(AppBase):
             self.draw()
 
             for n in range(5):
-                if self.stopFlag: break
+                if self.stop_flag: break
                 time.sleep(1)
 
             image_controls[current_indx].enabled = False

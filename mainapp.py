@@ -20,8 +20,6 @@ class MainApp(appbase.AppBase):
         self.current_screen_index = -1
         self.current_screen_name = ""
         self.screen_index = 0
-        self.running = False
-        self.current_app = None
         self.controller = controllerserver.ControllerServer(self)
         self.controller.start()
         self.restart_app = False
@@ -41,57 +39,56 @@ class MainApp(appbase.AppBase):
     def on_input_event(self, input_event):
         handled = False
 
-        if not handled and self.current_app is not None:
-            handled = self.current_app.on_input_event(input_event)
+        if not handled and self.running_app is not None:
+            handled = self.running_app.on_input_event(input_event)
 
         if not handled:
             if input_event == "right":
                 self.screen_index += 1
                 self.screen_index %= len(self.config["screenOrder"])
-                if self.current_app is not None:
-                    self.current_app.stop()
+                self.stop_running_app()
                 handled = True
             elif input_event == "left":
                 self.screen_index -= 1
                 self.screen_index %= len(self.config["screenOrder"])
-                if self.current_app is not None:
-                    self.current_app.stop()
+                self.stop_running_app()
                 handled = True
 
         return handled
 
-    def start_app(self, index):
+    def enter_sleep_mode(self):
+        if self.running_app:
+            def on_app_exit(app):
+                self.matrix.Clear()
+
+            self.running_app.on_app_exit = on_app_exit
+            self.stop_running_app()
+        else:
+            self.matrix.Clear()
+
+    def stop_running_app(self):
+        if self.running_app is not None:
+            self.running_app.stop()
+
+    def reload_running_app(self):
+        self.restart_app = True
+
+    def _start_app(self, index):
         self.current_screen_index = self.screen_index = index
         screen_name = self.config["screenOrder"][self.screen_index]
-        self.start_app_by_name(screen_name)
-
-    def start_app_by_name(self, screen_name):
         self.current_screen_name = screen_name
-        screen_app = self.config["screens"][screen_name]
-        screen_class = addons.apps[screen_app["app"]]
-        app_config = screen_app.get("config", {})
-        self.current_app = screen_class(self.config, app_config, self.loaded_fonts, self.matrix)
-        self.running = True
-        print("Starting app for screen " + screen_name)
-        print("Press CTRL-C to stop...")
-        self.current_app.start()
-        print("Execution complete")
-        self.running = False
+        self._start_app_by_name(screen_name)
 
     def wait_for_complete(self):
-        self.current_app.stop()
-        while self.running:
+        while self.running_app:
             time.sleep(1)
 
     def run(self):
         while True:
             if self.current_screen_index != self.screen_index or self.restart_app:
+                self.stop_running_app()
                 self.restart_app = False
-                try:
-                    self.start_app(self.screen_index)
-                except Exception as err:
-                    print("Exception while running app: %s" % err)
-                    self.running = False
+                self._start_app(self.screen_index)
             else:
                 time.sleep(1)
 

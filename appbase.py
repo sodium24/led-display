@@ -3,22 +3,34 @@ import time
 import sys
 import os
 import appcontrols
+import weakref
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
 
 class AppBase(object):
-    def __init__(self, config, app_config, loaded_fonts, matrix=None):
+    def __init__(self, config, app_config, loaded_fonts, matrix=None, parent=None):
         self.config = config
         self.app_config = app_config
         self.loaded_fonts = loaded_fonts
-        self.stopFlag = False
+        self.stop_flag = False
         self.controls = {}
         self.control_classes = {
+            "fill": appcontrols.FillControl,
             "text": appcontrols.TextControl,
             "image": appcontrols.ImageControl,
+            "rect": appcontrols.RectControl,
         }
         self.matrix = matrix
         self.next_z_index = 0
+        self._button_states = {}
+        self.on_app_exit = None
+
+        # To enable running a child app
+        self.running_app = None
+        self.parent_app = None
+
+        if parent is not None:
+            self.parent_app = weakref.ref(parent)
 
     def load_font(self, font_name):
         if font_name not in self.loaded_fonts:
@@ -34,35 +46,79 @@ class AppBase(object):
         self.next_z_index += 1
         return self.controls[control_id]
 
+    def get_control(control_id):
+        return self.controls.get(control_id)
+
     def _delete_control(control_id):
         if control_id in self.controls:
             del self.controls[control_id]
 
-    def update(self):
+    def update(self, directToMatrix = False):
+        canvas = self.matrix if directToMatrix else self.offscreen_canvas
+
         sorted_controls = sorted(self.controls.items(), key=lambda kv: kv[1].z_index)
         for control in sorted_controls:
             if control[1].enabled:
                 control[1].on_frame()
-                control[1].draw(self.offscreen_canvas)
+                control[1].draw(canvas)
+
+    def is_static(self):
+        static = True
+
+        for control in self.controls.items():
+            if control[1].enabled and not control[1].static:
+                static = False
+                break
+
+        return static
 
     def draw(self):
         self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
         self.offscreen_canvas.Clear()
 
+    def enter_sleep_mode(self):
+        if self.parent_app is not None:
+            self.parent_app().enter_sleep_mode()
+
     def on_input_event(self, input_event):
+        if input_event == "exit":
+            self.stop()
+            handled = True
         return False
 
     def on_joystick_press(self, button, button_states):
+        self._button_states = button_states
         return False
 
     def on_joystick_release(self, button, button_states):
+        if button == "a" and self._button_states.get("a"):
+            self.on_input_event("select")
+        if button == "b" and self._button_states.get("b"):
+            self.on_input_event("exit")
+        self._button_states = button_states
         return False
 
     def run(self):
         return
 
+    def _start_app_by_name(self, screen_name):
+        import addons
+        screen_app = self.config["screens"][screen_name]
+        screen_class = addons.apps[screen_app["app"]]
+        app_config = screen_app.get("config", {})
+        self.running_app = screen_class(self.config, app_config, self.loaded_fonts, matrix=self.matrix, parent=self)
+        try:
+            print("Starting app for screen " + screen_name)
+            print("Press CTRL-C to stop...")
+            self.running_app.start()
+            print("Execution complete")
+        except Exception as err:
+            print("Exception while running app: %s" % err)
+
+        self.running_app = None
+
     def stop(self):
-        self.stopFlag = True
+        self.stop_flag = True
 
     def start(self):
         if self.matrix is None:
@@ -94,6 +150,12 @@ class AppBase(object):
         self.offscreen_canvas = self.matrix.CreateFrameCanvas()
         self.offscreen_canvas.Clear()
 
-        self.run()
+        try:
+            self.run()
+        except Exception as err:
+            print("Exception while running app: %s" % err)
+
+        if self.on_app_exit:
+            self.on_app_exit(self)
 
         return True

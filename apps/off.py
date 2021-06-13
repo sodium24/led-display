@@ -6,3 +6,4 @@ class DisplayOff(AppBase):
 
     def run(self):
         self.matrix.Clear()
+        self.enter_sleep_mode()

@@ -17,6 +17,7 @@ class ControllerServer(object):
             self.app = weakref.ref(app)
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(("0.0.0.0", self.PORT))
 
         self.server_thread = None
@@ -75,16 +76,12 @@ class ControllerServer(object):
 
     def on_set_config(self, data):
         self.app().config = data["config"]
-        if self.app().current_app:
-            self.app().current_app.stop()
-            self.app().restart_app = True
+        self.app().reload_running_app()
         return {}
 
     def on_save_config(self, data):
         self.app().config = data["config"]
-        if self.app().current_app:
-            self.app().current_app.stop()
-            self.app().restart_app = True
+        self.app().reload_running_app()
         self.app().save_config()
         return {}
 

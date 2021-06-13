@@ -86,7 +86,7 @@ class TextControl(Control):
         self._color = color
         self._color_obj = graphics.Color(*self._color)
 
-    def get_color(self, color):
+    def get_color(self):
         return self._color
 
     def _update(self):
@@ -139,6 +139,7 @@ class TextControl(Control):
     x = property(get_x, set_x)
     y = property(get_y, set_y)
     align = property(get_align, set_align)
+    static = property(get_static)
 
 class ImageControl(Control):
     def __init__(self, control_id, app_base):
@@ -202,3 +203,104 @@ class ImageControl(Control):
     width = property(get_width, set_width)
     height = property(get_height, set_height)
 
+class FillControl(Control):
+    def __init__(self, control_id, app_base):
+        super(FillControl, self).__init__(control_id, app_base)
+        self._color = [0, 0, 0]
+
+    def set_color(self, color):
+        self._color = color
+
+    def get_color(self):
+        return self._color
+
+    def draw(self, canvas):
+        canvas.Fill(*self._color)
+
+    color = property(get_color, set_color)
+
+class RectControl(Control):
+    def __init__(self, control_id, app_base):
+        super(RectControl, self).__init__(control_id, app_base)
+        self._stroke_color = [0, 0, 0]
+        self._stroke_color_obj = graphics.Color(*self._stroke_color)
+        self._fill_color = [0, 0, 0]
+        self._fill_color_obj = graphics.Color(*self._fill_color)
+        self._has_stroke = False
+        self._has_fill = False
+        self._x = 0
+        self._y = 0
+        self._width = 0
+        self._height = 0
+
+    def set_stroke_color(self, color):
+        self._stroke_color = color
+        self._stroke_color_obj = graphics.Color(*self._stroke_color)
+
+    def get_stroke_color(self):
+        return self._stroke_color
+
+    def set_fill_color(self, color):
+        self._fill_color = color
+        self._fill_color_obj = graphics.Color(*self._fill_color)
+
+    def get_fill_color(self):
+        return self._fill_color
+
+    def set_has_stroke(self, enable):
+        self._has_stroke = enable
+
+    def get_has_stroke(self):
+        return self._has_stroke
+
+    def set_has_fill(self, enable):
+        self._has_fill = enable
+
+    def get_has_fill(self):
+        return self._has_fill
+
+    def set_x(self, x):
+        self._x = x
+
+    def get_x(self):
+        return self._x
+
+    def set_y(self, y):
+        self._y = y
+
+    def get_y(self):
+        return self._y
+
+    def set_width(self, width):
+        if width != self._width:
+            self._width = width
+
+    def get_width(self):
+        return self._width
+
+    def set_height(self, height):
+        if height != self._height:
+            self._height = height
+
+    def get_height(self):
+        return self._height
+
+    def draw(self, canvas):
+        if self._has_fill:
+            for y in range(self._y, self._y + self._height):
+                graphics.DrawLine(canvas, self._x, y, self._x + self._width, y, self._fill_color_obj)
+
+        if self._has_stroke:
+            graphics.DrawLine(canvas, self._x, y, self._x + self._width, y, self._stroke_color_obj)
+            graphics.DrawLine(canvas, self._x+self._width, y, self._x+self._width, y+self._height, self._stroke_color_obj)
+            graphics.DrawLine(canvas, self._x, y+self._height, self._x + self._width, y+self._height, self._stroke_color_obj)
+            graphics.DrawLine(canvas, self._x, y, self._x, y+self._height, self._stroke_color_obj)
+
+    stroke_color = property(get_stroke_color, set_stroke_color)
+    fill_color = property(get_fill_color, set_fill_color)
+    has_stroke = property(get_has_stroke, set_has_stroke)
+    has_fill = property(get_has_fill, set_has_fill)
+    x = property(get_x, set_x)
+    y = property(get_y, set_y)
+    width = property(get_width, set_width)
+    height = property(get_height, set_height)
