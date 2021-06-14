@@ -48,6 +48,7 @@ sudo python -m pip install -e .
 # Setup the default Synack sign configuration
 sudo bash /home/pi/led-display/led_display/initial_install/synack-restore-defaults.sh
 
+echo "--------------------------------------------------------------------------------"
 echo ""
 echo "The next portion of the installation will install the Adafruit Matrix Bonnet"
 echo "related libraries. This may take some time (15 minutes or so), so please"
@@ -56,10 +57,14 @@ echo ""
 echo "Note that the Synack LED Sign uses the LED Matrix Bonnet (option 1)."
 echo ""
 echo "By default only software PWM is supported, so unless you have upgraded this by"
-echo "soldering a connection on the Bonnet circuit board, please select \"CONVENIENCE\""
+echo "soldering a jumper on the Bonnet circuit board, please select \"CONVENIENCE\""
 echo "instead of \"QUALITY\" when prompted."
+echo ""
+echo "--------------------------------------------------------------------------------"
 
 sleep 30
+
+cd /home/pi
 
 # Run the Adafruit Matrix Bonnet install script for first-time setup
 curl https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/rgb-matrix.sh > /home/pi/adafruit-setup.sh
