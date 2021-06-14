@@ -9,5 +9,5 @@ setup(
     author_email='malcolm@sodium24.com',
     description='LED Display Application Framework',
     packages=find_packages(include=['led_display', 'led_display.*']),
-    install_requires=['rgbmatrix', 'pillow', 'flask'],
+    install_requires=['pillow', 'flask'],
 )
