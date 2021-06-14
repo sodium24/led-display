@@ -102,8 +102,8 @@ else
     ENABLE_ALIAS="true"
 fi
 
-sed "s/{SHOW_ALIAS}/$ENABLE_ALIAS/g; s/{SHOW_CLOCK}/$ENABLE_CLOCK/g" /home/pi/synack_config/apps/synack_config.json.in > /home/pi/synack_config/apps/synack_config.json
-rm /home/pi/synack_config/apps/synack_config.json.in
+sed "s/{SHOW_ALIAS}/$ENABLE_ALIAS/g; s/{SHOW_CLOCK}/$ENABLE_CLOCK/g" /home/pi/synack_config/apps/synack_display.json.in > /home/pi/synack_config/apps/synack_display.json
+rm /home/pi/synack_config/apps/synack_display.json.in
 
 echo "Changes have been saved! Please reboot or run 'sudo service led-display start' to continue."
 echo ""
