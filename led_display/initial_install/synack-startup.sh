@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script will be copied into your home directory as ~/led-sign-startup.sh.
+# This script will be copied into your home directory as ~/led-display-startup.sh.
 # Any modifications can be made to that file as desired. 
 #
 # The original is stored in the `initial_install` directory, and should generally
