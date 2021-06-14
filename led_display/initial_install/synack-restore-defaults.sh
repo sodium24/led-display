@@ -40,18 +40,18 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 service led-display stop
 
 # Add a symlink to the home directory for easy access to the script
-ln -s $SCRIPT_DIR/synack-restore-defaults.sh ~/led-display-restore-defaults.sh
+ln -s $SCRIPT_DIR/synack-restore-defaults.sh /home/pi/led-display-restore-defaults.sh
 
 # Install the startup script to the home directory
-cp -f $SCRIPT_DIR/synack-startup.sh ~/led-display-startup.sh
-chmod 755 ~/led-display-startup.sh
+cp -pf $SCRIPT_DIR/synack-startup.sh /home/pi/led-display-startup.sh
+chmod 755 /home/pi/led-display-startup.sh
 
 # Install the startup service
 cp -f $SCRIPT_DIR/led-display.service /etc/systemd/system/
 systemctl enable led-display
 
 # Copy the initial app/display configuration to the home directory
-cp -rf $SCRIPT_DIR/synack_config ~/
+cp -rpf $SCRIPT_DIR/synack_config /home/pi/
 
 echo '---------------------[ SYNACK LED SIGN ]--------------------'
 echo ''
@@ -102,11 +102,11 @@ else
     ENABLE_ALIAS="true"
 fi
 
-sed "s/{SHOW_ALIAS}/$ENABLE_ALIAS/g; s/{SHOW_CLOCK}/$ENABLE_CLOCK/g" ~/synack_config/apps/synack_config.json.in > ~/synack_config/apps/synack_config.json
-rm ~/synack_config/apps/synack_config.json.in
+sed "s/{SHOW_ALIAS}/$ENABLE_ALIAS/g; s/{SHOW_CLOCK}/$ENABLE_CLOCK/g" /home/pi/synack_config/apps/synack_config.json.in > /home/pi/synack_config/apps/synack_config.json
+rm /home/pi/synack_config/apps/synack_config.json.in
 
 echo "Changes have been saved! Please reboot or run 'sudo service led-display start' to continue."
 echo ""
-echo "If you wish to reconfigure your sign, run '~/led-display-restore-defaults.sh' anytime"
-echo "or manually make changes in the ~/synack_config directory"
+echo "If you wish to reconfigure your sign, run '/home/pi/led-display-restore-defaults.sh' anytime"
+echo "or manually make changes in the /home/pi/synack_config directory"
 

@@ -34,7 +34,7 @@
 #
 ################################################################################
 
-cd ~
+cd /home/pi
 sudo apt-get update
 sudo apt-get install -y git
 
@@ -42,14 +42,14 @@ git clone https://github.com/sodium24/led-display
 
 # Install the repo as a pip package "led_display"
 # The -e option is used so that changes can be easily made to the package
-cd ~/led-display
+cd /home/pi/led-display
 sudo python -m pip install -e .
 
 # Setup the default Synack sign configuration
-sudo bash ~/led-display/led_display/initial_install/synack-restore-defaults.sh
+sudo bash /home/pi/led-display/led_display/initial_install/synack-restore-defaults.sh
 
 # Run the Adafruit Matrix Bonnet install script for first-time setup
-curl https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/rgb-matrix.sh > ~/led-display/initial-install/adafruit-setup.sh
-sudo bash ~/led-display/initial-install/adafruit-setup.sh
+curl https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/rgb-matrix.sh > /home/pi/adafruit-setup.sh
+sudo bash /home/pi/adafruit-setup.sh
 
 # Done!
