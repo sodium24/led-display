@@ -35,7 +35,7 @@
 #
 ################################################################################
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 service led-display stop
 
