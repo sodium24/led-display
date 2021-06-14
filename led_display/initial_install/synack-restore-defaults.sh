@@ -106,15 +106,17 @@ fi
 cat /home/pi/synack_config/apps/synack_display.json.in | \
 sed "s/{ALIAS}/$USER_ALIAS/g" | \
 sed "s/{SHOW_ALIAS}/$ENABLE_ALIAS/g" | \
-sed "s/{SHOW_CLOCK}/$ENABLE_CLOCK/g" \
+sed "s/{SHOW_TIME}/$ENABLE_CLOCK/g" \
 >> /home/pi/synack_config/apps/synack_display.json
 
 chown pi:pi /home/pi/synack_config/apps/synack_display.json
 rm /home/pi/synack_config/apps/synack_display.json.in
 
 echo ""
-echo "Changes have been saved! Please reboot or run 'sudo service led-display start' to continue."
+echo "Changes have been saved! Please reboot or run"
+echo "'sudo service led-display start' to continue."
 echo ""
-echo "If you wish to reconfigure your sign, run '/home/pi/led-display-restore-defaults.sh' anytime"
-echo "or manually make changes in the '/home/pi/synack_config' directory"
+echo "If you wish to reconfigure your sign, run"
+echo "'/home/pi/led-display-restore-defaults.sh' anytime or manually make"
+echo "changes in the '/home/pi/synack_config' directory"
 
