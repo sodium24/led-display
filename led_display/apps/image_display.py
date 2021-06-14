@@ -30,7 +30,8 @@
 
 import time
 import datetime
-from app_base import AppBase
+
+from ..app_base import AppBase
 
 class ImageDisplay(AppBase):
     """

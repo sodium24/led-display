@@ -1,7 +1,7 @@
 ################################################################################
-# cli.py
+# off.py
 #-------------------------------------------------------------------------------
-# Command line interface for interacting with the LED display over TCP.
+# App which powers off the LED panel.
 # 
 # By Malcolm Stagg
 #
@@ -27,39 +27,21 @@
 #
 ################################################################################
 
-import cmd
-from controllerclient import ControllerClient
+from ..app_base import AppBase
 
-controller = ControllerClient()
-
-class LedDisplayCli(cmd.Cmd):
+class DisplayOff(AppBase):
     """
-    CLI for interacting with the LED display over TCP
+    App to power off the LED display
     """
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize the app
+        """
+        super(DisplayOff, self).__init__(*args, **kwargs)
 
-    intro = "LED Display CLI\n\nType help or ? to list commands.\n"
-    prompt = 'led-display> '
-    file = None
-
-    def do_left(self, arg):
-        'User input event: left'
-        controller.send_input_event("left")
-
-    def do_right(self, arg):
-        'User input event: right'
-        controller.send_input_event("right")
-
-    def do_up(self, arg):
-        'User input event: up'
-        controller.send_input_event("up")
-
-    def do_down(self, arg):
-        'User input event: down'
-        controller.send_input_event("down")
-
-    def do_select(self, arg):
-        'User input event: select'
-        controller.send_input_event("select")
-
-if __name__ == '__main__':
-    LedDisplayCli().cmdloop()
+    def run(self):
+        """
+        Main routine to power off the LED display
+        """
+        self.matrix.Clear()
+        self.enter_sleep_mode()

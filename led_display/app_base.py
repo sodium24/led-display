@@ -34,9 +34,10 @@ import os
 import json
 import weakref
 import threading
-import app_controls
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
+ 
+from . import app_controls
 
 class AppBase(object):
     """

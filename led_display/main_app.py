@@ -32,9 +32,9 @@ import json
 import threading
 import time
 import os
-import addons
-from app_base import AppBase
-import controllers.joystick_translator
+from . import addons
+from .app_base import AppBase
+from .controllers.joystick_translator import JoystickTranslator
 
 class MainApp(AppBase):
     """
@@ -72,7 +72,7 @@ class MainApp(AppBase):
         self.restart_app = False
 
         # Translate joystick data to input events
-        self.joystick_translator = controllers.joystick_translator.JoystickTranslator()
+        self.joystick_translator = JoystickTranslator()
 
         # Load controllers
         self.controllers = []

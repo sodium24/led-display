@@ -19,11 +19,11 @@
     },
     "fonts": {
         "6x9": {
-            "path": "/home/pi/led-display/fonts/6x9.bdf",
+            "path": "/home/pi/led-display/led_display/fonts/6x9.bdf",
             "outline": false
         },
         "7x13": {
-            "path": "/home/pi/led-display/fonts/7x13.bdf",
+            "path": "/home/pi/led-display/led_display/fonts/7x13.bdf",
             "outline": false
         }
     }

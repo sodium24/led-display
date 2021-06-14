@@ -33,8 +33,9 @@
 import time
 import random
 import threading
-from app_base import AppBase
 from rgbmatrix import graphics
+
+from ..app_base import AppBase
 
 class SnakeBody(object):
     """

@@ -1,7 +1,7 @@
 {
     "app": "slideshow",
     "config": {
-        "folders": ["/home/pi/led-display/images"],
+        "folders": ["/home/pi/led-display/led_display/images"],
         "delay": 5
     }
 }

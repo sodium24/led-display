@@ -27,15 +27,15 @@
 #
 ################################################################################
 
-from apps.off import DisplayOff
-from apps.image_display import ImageDisplay
-from apps.slideshow import Slideshow
-from apps.menu import Menu
-from apps.snake import SnakeGame
+from .apps.off import DisplayOff
+from .apps.image_display import ImageDisplay
+from .apps.slideshow import Slideshow
+from .apps.menu import Menu
+from .apps.snake import SnakeGame
 
-from controllers.controller_server import ControllerServer
-from controllers.joystick_controller import JoystickController
-from controllers.web_controller import WebController
+from .controllers.controller_server import ControllerServer
+from .controllers.joystick_controller import JoystickController
+from .controllers.web_controller import WebController
 
 # List of installed apps
 

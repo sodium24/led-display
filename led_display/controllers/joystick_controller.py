@@ -32,8 +32,8 @@ import os
 import time
 import fcntl
 import weakref
-from controllers.joystick_device import Joystick
-from controller_base import ControllerBase
+from .joystick_device import Joystick
+from ..controller_base import ControllerBase
 
 def has_js():
     """

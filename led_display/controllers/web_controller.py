@@ -31,9 +31,10 @@ import time
 import threading
 import sys
 from flask import Flask, json, request, render_template
-from controller_base import ControllerBase
-from controllers.controller_client import ControllerClient
 from multiprocessing import Process
+
+from ..controller_base import ControllerBase
+from .controller_client import ControllerClient
 
 def web_process(ip, port, debug):
     """

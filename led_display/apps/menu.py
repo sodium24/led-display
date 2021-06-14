@@ -30,7 +30,8 @@
 import time
 import datetime
 import threading
-from app_base import AppBase
+
+from ..app_base import AppBase
 
 class Menu(AppBase):
     """

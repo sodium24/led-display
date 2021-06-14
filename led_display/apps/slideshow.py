@@ -31,7 +31,8 @@
 import time
 import datetime
 import os
-from app_base import AppBase
+
+from ..app_base import AppBase
 
 class Slideshow(AppBase):
     """

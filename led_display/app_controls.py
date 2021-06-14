@@ -28,9 +28,9 @@
 #
 ################################################################################
 
+import weakref
 from PIL import Image
 from rgbmatrix import graphics
-import weakref
 
 class Control(object):
     """
