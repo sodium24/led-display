@@ -250,7 +250,7 @@ class MainApp(AppBase):
         Main routine to start up child apps as needed
         """
 
-        load_screen_app = system_config["settings"].get("loadScreenApp", "")
+        load_screen_app = self.config["settings"].get("loadScreenApp", "")
 
         if len(load_screen_app) > 0:
             # Show the load screen for 10 seconds
