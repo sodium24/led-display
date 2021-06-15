@@ -19,17 +19,17 @@ The LED display (running an earlier version of this framework) has been featured
 
 [![Team SODIUM-24 profile](https://img.youtube.com/vi/PUPOOtkAFzo/0.jpg)](https://www.youtube.com/watch?v=PUPOOtkAFzo)
 
-It will be provided as a swag gift for some exceptional Synack Red Team (SRT) members. Here are some display examples from the swag setup:
+It will be provided as a swag gift for some exceptional [Synack Red Team](https://www.synack.com/red-team) (SRT) members. Here are some display examples from the swag setup:
 
-![Synack Personalized Clock](swag1.jpg)
-![Synack Red Team Logo](swag4.jpg)
-![Menu](swag2.jpg)
-![Snake Game](swag3.jpg)
+![Synack Personalized Clock](docs/swag1.jpg)
+![Synack Red Team Logo](docs/swag4.jpg)
+![Menu](docs/swag2.jpg)
+![Snake Game](docs/swag3.jpg)
 
 ## Pairing a wireless joystick
 
-See [Pairing a wireless joystick](pairing_wireless_joystick.md) for detailed instructions on how to pair your joystick to the display.
+See [Pairing a wireless joystick](docs/pairing_wireless_joystick.md) for detailed instructions on how to pair your joystick to the display.
 
 ## Creating a new app
 
-See [Creating a new app](creating_new_app.md) for instructions on how to add a new app to the framework on your display.
+See [Creating a new app](docs/creating_new_app.md) for instructions on how to add a new app to the framework on your display.
