@@ -197,8 +197,9 @@ class SynackLoadAnimationControl(Control):
             composite = Image.composite(self._load_3_weighted, composite, self._load_3)
             composite = Image.composite(self._load_4_weighted, composite, self._load_4)
             composite = Image.alpha_composite(self._bkg, composite)
+            composite = composite.convert("RGB")
 
-            self._frames += [composite.convert("RGB")]
+            self._frames += [composite]
 
             canvas.SetImage(composite, offset_x=self._x, offset_y=self._y)
 
