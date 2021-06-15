@@ -241,29 +241,26 @@ class MainApp(AppBase):
         while self.running_app:
             time.sleep(1)
 
+    def app_kill_thread(self, timeout):
+        time.sleep(timeout)
+        self.stop_running_app()
+
     def run(self):
         """
         Main routine to start up child apps as needed
         """
-        # Show the load screen for 10 seconds
-        time_start = time.time()
 
-        load_path = "/home/pi/led-display/images" # TODO: don't hard-code this!
+        load_screen_app = system_config["settings"].get("loadScreenApp", "")
 
-        load_control = self.create_control("synack_load", "synackLoadControl")
-        load_control.path = load_path
-        load_control.x = 0
-        load_control.y = 0
-        load_control.width = self.offscreen_canvas.width
-        load_control.height = self.offscreen_canvas.height
+        if len(load_screen_app) > 0:
+            # Show the load screen for 10 seconds
+            load_screen_kill = threading.Thread(target=self.app_kill_thread)
+            load_screen_kill.daemon = True
+            load_screen_kill.start(args=(10.0,))
 
-        while (time.time() - time_start < 10.0) and not self.stop_event.wait(0.1):
+            self._start_app_by_name(load_screen_app)
 
-            # update the display buffer with image data from the controls
-            self.update()
-
-            # redraw the display
-            self.draw()
+            load_screen_kill.join()
 
         self.matrix.Clear()
 

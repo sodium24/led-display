@@ -19,7 +19,8 @@
         "webInterfaceIp": "0.0.0.0",
         "webInterfacePort": 80,
         "webInterfaceDebug": true,
-        "displayOffAfterBoot": false
+        "displayOffAfterBoot": false,
+        "loadScreenApp": "synack_loading"
     },
     "fonts": {
         "6x9": {
