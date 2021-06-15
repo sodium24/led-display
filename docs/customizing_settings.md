@@ -12,7 +12,7 @@ These are the global settings that configure your LED display. For example, to t
     "settings": {
         "title": "Synack LED Display",
         "displayOffAfterBoot": false
-    },
+    }
 ```
 
 ## Per-App Settings
@@ -33,7 +33,7 @@ To turn off your personalizations, you can set `"enable": false` here:
         "scroll": "auto",
         "align": "center",
         "enable": true
-    },
+    }
 ```
 
 ## App Display Order

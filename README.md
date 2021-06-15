@@ -1,6 +1,6 @@
 # led-display Python Application Framework
 
-This repo is a free Python software framework designed for a 64x64 LED matrix display. It is built on top of the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library as a simple way to get apps running on your display. Some of the features include:
+led-display is a free Python software framework designed for a 64x64 LED matrix display. It is built on top of the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library as a simple way to get apps running on your display. Some of the features include:
 
 - Extensible with your new applications
 - Simple graphics and text display, abstracted through the use of controls

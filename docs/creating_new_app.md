@@ -82,4 +82,6 @@ Restart the LED display service:
 $ sudo service led-display restart
 ```
 
+![New App](new_app.jpg)
+
 Now you should see your app!
