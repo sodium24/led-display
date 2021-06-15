@@ -107,7 +107,7 @@ cat /home/pi/synack_config/apps/synack_display.json.in | \
 sed "s/{ALIAS}/$USER_ALIAS/g" | \
 sed "s/{SHOW_ALIAS}/$ENABLE_ALIAS/g" | \
 sed "s/{SHOW_TIME}/$ENABLE_CLOCK/g" \
->> /home/pi/synack_config/apps/synack_display.json
+> /home/pi/synack_config/apps/synack_display.json
 
 chown pi:pi /home/pi/synack_config/apps/synack_display.json
 rm /home/pi/synack_config/apps/synack_display.json.in
