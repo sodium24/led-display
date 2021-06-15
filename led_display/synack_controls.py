@@ -147,8 +147,8 @@ class SynackLoadAnimationControl(Control):
         load_path = self._path
 
         if self._width > 0 and self._height > 0:
-            self.bkg = Image.new('RGB', (64,64))
-            self.bkg.putalpha(255)
+            self._bkg = Image.new('RGB', (64,64))
+            self._bkg.putalpha(255)
             self._load_1 = Image.open(os.path.join(load_path, "srt_loading_1.png"))
             self._load_1.thumbnail((self._width, self._height), Image.ANTIALIAS)
             self._load_2 = Image.open(os.path.join(load_path, "srt_loading_2.png"))
@@ -192,11 +192,11 @@ class SynackLoadAnimationControl(Control):
             self._load_3_weighted.putalpha(load_3_alpha)
             self._load_4_weighted.putalpha(load_4_alpha)
 
-            composite = Image.composite(self._load_1_weighted, self.bkg, self._load_1)
+            composite = Image.composite(self._load_1_weighted, self._bkg, self._load_1)
             composite = Image.composite(self._load_2_weighted, composite, self._load_2)
             composite = Image.composite(self._load_3_weighted, composite, self._load_3)
             composite = Image.composite(self._load_4_weighted, composite, self._load_4)
-            composite = Image.alpha_composite(bkg, composite)
+            composite = Image.alpha_composite(self._bkg, composite)
 
             self._frames += [composite.convert("RGB")]
 
