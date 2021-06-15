@@ -29,6 +29,7 @@
 ################################################################################
 
 import weakref
+import os
 from PIL import Image
 from rgbmatrix import graphics
 from .app_controls import Control
