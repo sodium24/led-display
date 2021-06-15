@@ -22,6 +22,7 @@ The LED display (running an earlier version of this framework) has been featured
 It will be provided as a swag gift for some exceptional Synack Red Team (SRT) members. Here are some display examples from the swag setup:
 
 ![Synack Personalized Clock](swag1.jpg)
+![Synack Red Team Logo](swag4.jpg)
 ![Menu](swag2.jpg)
 ![Snake Game](swag3.jpg)
 
