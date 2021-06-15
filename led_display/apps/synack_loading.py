@@ -54,32 +54,35 @@ class SynackLoading(AppBase):
 
         frames = []
 
-        # generate frames with different alpha values
-        for frame_num in range(40):
-            load_1_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num)%40, 40)
-            load_2_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+5)%40, 40)
-            load_3_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+10)%40, 40)
-            load_4_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+15)%40, 40)
+        frame_num = 0
+        while not self.stop_event.wait(0.1):
+            if len(frames) > frame_num:
+                composite = frames[frame_num]
+            else:
+                load_1_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num)%16, 16)
+                load_2_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+2)%16, 16)
+                load_3_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+4)%16, 16)
+                load_4_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+8)%16, 16)
 
-            load_1_weighted.putalpha(load_1_alpha)
-            load_2_weighted.putalpha(load_2_alpha)
-            load_3_weighted.putalpha(load_3_alpha)
-            load_4_weighted.putalpha(load_4_alpha)
+                load_1_weighted.putalpha(load_1_alpha)
+                load_2_weighted.putalpha(load_2_alpha)
+                load_3_weighted.putalpha(load_3_alpha)
+                load_4_weighted.putalpha(load_4_alpha)
 
-            composite = Image.composite(load_1_weighted, bkg, load_1)
-            composite = Image.composite(load_2_weighted, composite, load_2)
-            composite = Image.composite(load_3_weighted, composite, load_3)
-            composite = Image.composite(load_4_weighted, composite, load_4)
-            composite = Image.alpha_composite(bkg, composite)
+                composite = Image.composite(load_1_weighted, bkg, load_1)
+                composite = Image.composite(load_2_weighted, composite, load_2)
+                composite = Image.composite(load_3_weighted, composite, load_3)
+                composite = Image.composite(load_4_weighted, composite, load_4)
+                composite = Image.alpha_composite(bkg, composite)
 
-            frames += [composite.convert("RGB")]
+                frames += [composite]
 
-        i = 0
-        while not self.stop_event.wait(0.05):
-            self.offscreen_canvas.SetImage(frames[i])
-            i = (i+1)%len(frames)
+            self.offscreen_canvas.SetImage(composite.convert("RGB"))
+
+            frame_num = (frame_num+1)%16
 
             # redraw the display
             self.draw()
+
 
 
