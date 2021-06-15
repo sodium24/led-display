@@ -16,6 +16,9 @@
     },
     "settings": {
         "title": "Synack LED Display",
+        "webInterfaceIp": "0.0.0.0",
+        "webInterfacePort": 80,
+        "webInterfaceDebug": true,
         "displayOffAfterBoot": false
     },
     "fonts": {
