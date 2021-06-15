@@ -1,6 +1,6 @@
 # led-display Python Application Framework
 
-`led-display` is a free Python software framework designed as a user interface for running apps on a 64x64 LED matrix display, and usable with any size of display. It is built on top of the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library. Some of the features include:
+`led-display` is a free Python software framework designed as a user interface for running apps on a 64x64 LED matrix display, though usable with any size of display. It is built on top of the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library. Some of the features include:
 
 - Extensible with your new applications
 - Simple graphics and text display, abstracted through the use of controls
@@ -11,7 +11,7 @@
    - Slideshow for picture display
    - Snake game you can play with a joystick
 
-Some of the install scripts and features developed for this framework were added to assist with its use for [Synack Red Team](https://www.synack.com/red-team) swag. However, it is also intended to be a customizable framework which can be used for pretty much any purpose. Please feel free to use it in your own projects, and to contribute features, updates, and fixes to it.
+Some of the install scripts and features developed for this framework were added to assist with its use as [Synack Red Team](https://www.synack.com/red-team) swag. However, it is designed to be a customizable framework which can be used for pretty much any purpose. Please feel free to use it in your own projects, and to contribute features, updates, and fixes to it.
 
 ## Examples of Use
 

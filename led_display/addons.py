@@ -32,6 +32,7 @@ from .apps.image_display import ImageDisplay
 from .apps.slideshow import Slideshow
 from .apps.menu import Menu
 from .apps.snake import SnakeGame
+from .apps.synack_loading import SynackLoading
 
 from .controllers.controller_server import ControllerServer
 from .controllers.joystick_controller import JoystickController
@@ -45,6 +46,7 @@ apps = {
     "slideshow": Slideshow,
     "menu": Menu,
     "snake": SnakeGame,
+    "synackLoading": SynackLoading,
 }
 
 # List of installed controllers

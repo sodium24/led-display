@@ -1,0 +1,6 @@
+{
+    "app": "synackLoading",
+    "config": {
+        "path": "/home/pi/led-display/images"
+    }
+}
