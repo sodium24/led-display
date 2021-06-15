@@ -38,6 +38,7 @@ from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix import graphics
  
 from . import app_controls
+from . import synack_controls
 
 class AppBase(object):
     """
@@ -57,6 +58,7 @@ class AppBase(object):
             "text": app_controls.TextControl,
             "image": app_controls.ImageControl,
             "rect": app_controls.RectControl,
+            "synack_load": synack_controls.SynackLoadAnimationControl,
         }
         self.matrix = matrix
         self.config_directory = config_directory

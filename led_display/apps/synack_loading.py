@@ -36,50 +36,17 @@ class SynackLoading(AppBase):
         """
         load_path = self.app_config["path"]
 
-        bkg = Image.new('RGB', (64,64))
-        bkg.putalpha(255)
+        load_control = self.create_control("synack_load", "synackLoadControl")
+        load_control.path = load_path
+        load_control.x = 0
+        load_control.y = 0
+        load_control.width = 64
+        load_control.height = 64
 
-        load_1 = Image.open(os.path.join(load_path, "srt_loading_1.png"))
-        load_2 = Image.open(os.path.join(load_path, "srt_loading_2.png"))
-        load_3 = Image.open(os.path.join(load_path, "srt_loading_3.png"))
-        load_4 = Image.open(os.path.join(load_path, "srt_loading_4.png"))
-
-        load_1_weighted = load_1.copy()
-        load_2_weighted = load_2.copy()
-        load_3_weighted = load_3.copy()
-        load_4_weighted = load_4.copy()
-
-        alpha_min = 75
-        alpha_max = 205
-
-        frames = []
-
-        frame_num = 0
         while not self.stop_event.wait(0.1):
-            if len(frames) > frame_num:
-                composite = frames[frame_num]
-            else:
-                load_1_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num)%16, 16)
-                load_2_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+2)%16, 16)
-                load_3_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+4)%16, 16)
-                load_4_alpha = compute_alpha(alpha_min, alpha_max, (-frame_num+8)%16, 16)
 
-                load_1_weighted.putalpha(load_1_alpha)
-                load_2_weighted.putalpha(load_2_alpha)
-                load_3_weighted.putalpha(load_3_alpha)
-                load_4_weighted.putalpha(load_4_alpha)
-
-                composite = Image.composite(load_1_weighted, bkg, load_1)
-                composite = Image.composite(load_2_weighted, composite, load_2)
-                composite = Image.composite(load_3_weighted, composite, load_3)
-                composite = Image.composite(load_4_weighted, composite, load_4)
-                composite = Image.alpha_composite(bkg, composite)
-
-                frames += [composite]
-
-            self.offscreen_canvas.SetImage(composite.convert("RGB"))
-
-            frame_num = (frame_num+1)%16
+            # update the display buffer with image data from the controls
+            self.update()
 
             # redraw the display
             self.draw()
