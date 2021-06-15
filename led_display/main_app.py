@@ -265,6 +265,8 @@ class MainApp(AppBase):
             # redraw the display
             self.draw()
 
+        self.matrix.Clear()
+
         while True:
             if not self.off_at_boot and (self.current_screen_index != self.screen_index or self.restart_app):
                 self.stop_running_app()
