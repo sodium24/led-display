@@ -28,7 +28,7 @@ class SynackLoading(AppBase):
         """
         Initialize the app
         """
-        super(LoadScreen, self).__init__(*args, **kwargs)
+        super(SynackLoading, self).__init__(*args, **kwargs)
 
     def run(self):
         """
