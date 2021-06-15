@@ -15,7 +15,8 @@
         "ledMultiplexing": 0
     },
     "settings": {
-        "title": "Synack LED Display"
+        "title": "Synack LED Display",
+        "displayOffAfterBoot": false
     },
     "fonts": {
         "6x9": {
