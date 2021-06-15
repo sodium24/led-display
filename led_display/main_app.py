@@ -66,7 +66,7 @@ class MainApp(AppBase):
         super(MainApp, self).__init__(system_config, {}, self.loaded_fonts, config_directory=config_directory)
 
         # Check if display should turn on at boot?
-        self.off_at_boot = self.system_config["settings"]["displayOffAfterBoot"]
+        self.off_at_boot = system_config["settings"]["displayOffAfterBoot"]
 
         self.screen_order = screen_order_list
         self.current_screen_index = -1
