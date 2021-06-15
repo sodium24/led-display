@@ -1,4 +1,4 @@
-# Creating a new app
+# Creating a New App
 
 Your app can live in the `led-display/led_display/apps` directory. Take a look at some of the other apps there to see how they work.
 

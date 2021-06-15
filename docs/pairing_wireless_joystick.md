@@ -1,4 +1,4 @@
-# Pairing a wireless joystick
+# Pairing a Wireless Joystick
 
 This software has been tested to be compatible with an XBox One wireless controller. Other video game controllers should also work, but they _might_ require some software modifications. Please share your experience getting these working.
 

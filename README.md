@@ -26,14 +26,14 @@ It will be provided as a swag gift for some exceptional [Synack Red Team](https:
 ![Menu](docs/swag2.jpg)
 ![Snake Game](docs/swag3.jpg)
 
-## Pairing a wireless joystick
+## Pairing a Wireless Joystick
 
-See [Pairing a wireless joystick](docs/pairing_wireless_joystick.md) for detailed instructions on how to pair your joystick to the display.
+See [Pairing a Wireless Joystick](docs/pairing_wireless_joystick.md) for detailed instructions on how to pair your joystick to the display.
 
-## Customizing settings
+## Customizing Settings
 
-See [Customizing settings](docs/customizing_settings.md) for instructions on how to configure your panel, the framework software, and apps.
+See [Customizing Settings](docs/customizing_settings.md) for instructions on how to configure your panel, the framework software, and apps.
 
-## Creating a new app
+## Creating a New App
 
-See [Creating a new app](docs/creating_new_app.md) for instructions on how to add a new app to the framework on your display.
+See [Creating a New App](docs/creating_new_app.md) for instructions on how to add a new app to the framework on your display.
