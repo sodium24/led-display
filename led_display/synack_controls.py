@@ -201,7 +201,7 @@ class SynackLoadAnimationControl(Control):
 
             self._frames += [composite]
 
-            canvas.SetImage(composite, offset_x=self._x, offset_y=self._y)
+        canvas.SetImage(composite, offset_x=self._x, offset_y=self._y)
 
     path = property(get_path, set_path)
     x = property(get_x, set_x)
