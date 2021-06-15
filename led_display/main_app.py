@@ -65,6 +65,9 @@ class MainApp(AppBase):
         # AppBase initialization
         super(MainApp, self).__init__(system_config, {}, self.loaded_fonts, config_directory=config_directory)
 
+        # Check if display should turn on at boot?
+        self.off_at_boot = self.system_config["settings"]["displayOffAfterBoot"]
+
         self.screen_order = screen_order_list
         self.current_screen_index = -1
         self.current_screen_name = ""
@@ -108,6 +111,10 @@ class MainApp(AppBase):
         Handle an input event. Return true if handled.
         """
         handled = False
+
+        if self.off_at_boot:
+            self.off_at_boot = False
+            handled = True
 
         if not handled and self.running_app is not None:
             handled = self.running_app.on_input_event(input_event)
@@ -239,7 +246,7 @@ class MainApp(AppBase):
         Main routine to start up child apps as needed
         """
         while True:
-            if self.current_screen_index != self.screen_index or self.restart_app:
+            if not self.off_at_boot and (self.current_screen_index != self.screen_index or self.restart_app):
                 self.stop_running_app()
                 self.restart_app = False
                 self._start_app(self.screen_index)
