@@ -254,9 +254,9 @@ class MainApp(AppBase):
 
         if len(load_screen_app) > 0:
             # Show the load screen for 10 seconds
-            load_screen_kill = threading.Thread(target=self.app_kill_thread)
+            load_screen_kill = threading.Thread(target=self.app_kill_thread,args=(10.0,))
             load_screen_kill.daemon = True
-            load_screen_kill.start(args=(10.0,))
+            load_screen_kill.start()
 
             self._start_app_by_name(load_screen_app)
 
