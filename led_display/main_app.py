@@ -85,27 +85,6 @@ class MainApp(AppBase):
             controller.start()
             self.controllers += [controller]
 
-        # Show the load screen for 10 seconds
-        time_start = time.time()
-
-        load_path = "/home/pi/led-display/images" # TODO: don't hard-code this!
-
-        load_control = self.create_control("synack_load", "synackLoadControl")
-        load_control.path = load_path
-        load_control.x = 0
-        load_control.y = 0
-        load_control.width = self.offscreen_canvas.width
-        load_control.height = self.offscreen_canvas.height
-
-        while (time.time() - time_start < 10.0) and not self.stop_event.wait(0.1):
-
-            # update the display buffer with image data from the controls
-            self.update()
-
-            # redraw the display
-            self.draw()
-
-
     def get_state(self):
         """
         Retrieve the current app state
@@ -266,6 +245,26 @@ class MainApp(AppBase):
         """
         Main routine to start up child apps as needed
         """
+        # Show the load screen for 10 seconds
+        time_start = time.time()
+
+        load_path = "/home/pi/led-display/images" # TODO: don't hard-code this!
+
+        load_control = self.create_control("synack_load", "synackLoadControl")
+        load_control.path = load_path
+        load_control.x = 0
+        load_control.y = 0
+        load_control.width = self.offscreen_canvas.width
+        load_control.height = self.offscreen_canvas.height
+
+        while (time.time() - time_start < 10.0) and not self.stop_event.wait(0.1):
+
+            # update the display buffer with image data from the controls
+            self.update()
+
+            # redraw the display
+            self.draw()
+
         while True:
             if not self.off_at_boot and (self.current_screen_index != self.screen_index or self.restart_app):
                 self.stop_running_app()
