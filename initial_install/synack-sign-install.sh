@@ -46,7 +46,7 @@ cd /home/pi/led-display
 sudo python -m pip install -e .
 
 # Setup the default Synack sign configuration
-sudo bash /home/pi/led-display/led_display/initial_install/synack-restore-defaults.sh
+sudo bash /home/pi/led-display/initial_install/synack-restore-defaults.sh
 
 # To enable use of an XBox controller, Bluetooth ERTM needs to be disabled
 echo "options bluetooth disable_ertm=Y" | sudo tee /etc/modprobe.d/bluetooth.conf

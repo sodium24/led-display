@@ -4,7 +4,7 @@
         "display": [
             {
                 "type": "image",
-                "filename": "/home/pi/led-display/led_display/images/srt_64.png",
+                "filename": "/home/pi/led-display/images/srt_64.png",
                 "rect": [0, 0, 64, 64]
             },
             {
