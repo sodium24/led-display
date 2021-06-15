@@ -187,10 +187,10 @@ class SynackLoadAnimationControl(Control):
             load_3_alpha = compute_alpha(alpha_min, alpha_max, (-self._frame_num+4)%16, 16)
             load_4_alpha = compute_alpha(alpha_min, alpha_max, (-self._frame_num+8)%16, 16)
 
-            self.load_1_weighted.putalpha(load_1_alpha)
-            self.load_2_weighted.putalpha(load_2_alpha)
-            self.load_3_weighted.putalpha(load_3_alpha)
-            self.load_4_weighted.putalpha(load_4_alpha)
+            self._load_1_weighted.putalpha(load_1_alpha)
+            self._load_2_weighted.putalpha(load_2_alpha)
+            self._load_3_weighted.putalpha(load_3_alpha)
+            self._load_4_weighted.putalpha(load_4_alpha)
 
             composite = Image.composite(self._load_1_weighted, self.bkg, self._load_1)
             composite = Image.composite(self._load_2_weighted, composite, self._load_2)
