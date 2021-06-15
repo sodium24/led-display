@@ -13,6 +13,18 @@ This repo is a free WIP Python software framework designed for a 64x64 LED matri
 
 Some of the install scripts and features developed for this framework were intended to assist with its use for [Synack Red Team](https://www.synack.com/red-team) swag. However, it is also intended to be a customizable framework which can be used for pretty much any purpose. Please feel free to use it in your own projects, or to contribute features, updates, and fixes to it.
 
+## Examples of Use
+
+The LED display (running an earlier version of this framework) has been featured in a [Team SODIUM-24](https://www.sodium24.com/sc2.html) profile for the [DARPA](https://www.darpa.mil) SC2 competition:
+
+[![Team SODIUM-24 profile](https://img.youtube.com/vi/PUPOOtkAFzo/0.jpg)](https://www.youtube.com/watch?v=PUPOOtkAFzo)
+
+It will be provided as a swag gift for some exceptional Synack Red Team (SRT) members. Here are some display examples from the swag setup:
+
+![Synack Personalized Clock](swag1.jpg)
+![Menu](swag2.jpg)
+![Snake Game](swag3.jpg)
+
 ## Pairing a wireless joystick
 
 See [Pairing a wireless joystick](pairing_wireless_joystick.md) for detailed instructions on how to pair your joystick to the display.
