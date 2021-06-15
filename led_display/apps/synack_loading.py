@@ -20,7 +20,7 @@ def compute_alpha(alpha_min, alpha_max, frame_num, frame_max):
     )
     return alpha
 
-class LoadScreen(AppBase):
+class SynackLoading(AppBase):
     """
     Cool Synack load screen
     """
