@@ -179,6 +179,9 @@ class SynackLoadAnimationControl(Control):
         if len(self._frames) > self._frame_num:
             composite = self._frames[self._frame_num]
         else:
+            alpha_min = 75
+            alpha_max = 205
+
             load_1_alpha = compute_alpha(alpha_min, alpha_max, (-self._frame_num)%16, 16)
             load_2_alpha = compute_alpha(alpha_min, alpha_max, (-self._frame_num+2)%16, 16)
             load_3_alpha = compute_alpha(alpha_min, alpha_max, (-self._frame_num+4)%16, 16)
