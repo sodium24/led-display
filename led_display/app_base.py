@@ -95,10 +95,13 @@ class AppBase(object):
         """
         Load an app configuration by screen name from "$LED_DISPLAY_CONFIG/apps"
         """
-        apps_path = os.path.join(config_directory, "apps")
-        app_json_path = os.path.join(apps_path, screen_name + ".json")
-        with open(app_json_path) as f:
-            return json.loads(f.read())
+        try:
+            apps_path = os.path.join(config_directory, "apps")
+            app_json_path = os.path.join(apps_path, screen_name + ".json")
+            with open(app_json_path) as f:
+                return json.loads(f.read())
+        except Exception as err:
+            raise Exception("Exception reading app config for screen_name=\"%s\": %s" % (screen_name, err))
 
     def load_font(self, font_name):
         """
