@@ -66,15 +66,15 @@ class SynackLoadAnimationControl(Control):
         self._width = 0
         self._height = 0
         self._frames = []
-        self.bkg = None
-        self.load_1 = None
-        self.load_2 = None
-        self.load_3 = None
-        self.load_4 = None
-        self.load_1_weighted = None
-        self.load_2_weighted = None
-        self.load_3_weighted = None
-        self.load_4_weighted = None
+        self._bkg = None
+        self._load_1 = None
+        self._load_2 = None
+        self._load_3 = None
+        self._load_4 = None
+        self._load_1_weighted = None
+        self._load_2_weighted = None
+        self._load_3_weighted = None
+        self._load_4_weighted = None
 
     def set_path(self, path):
         """
@@ -148,19 +148,19 @@ class SynackLoadAnimationControl(Control):
         if self._width > 0 and self._height > 0:
             self.bkg = Image.new('RGB', (64,64))
             self.bkg.putalpha(255)
-            self.load_1 = Image.open(os.path.join(load_path, "srt_loading_1.png"))
-            self.load_1.thumbnail((self._width, self._height), Image.ANTIALIAS)
-            self.load_2 = Image.open(os.path.join(load_path, "srt_loading_2.png"))
-            self.load_2.thumbnail((self._width, self._height), Image.ANTIALIAS)
-            self.load_3 = Image.open(os.path.join(load_path, "srt_loading_3.png"))
-            self.load_3.thumbnail((self._width, self._height), Image.ANTIALIAS)
-            self.load_4 = Image.open(os.path.join(load_path, "srt_loading_4.png"))
-            self.load_4.thumbnail((self._width, self._height), Image.ANTIALIAS)
+            self._load_1 = Image.open(os.path.join(load_path, "srt_loading_1.png"))
+            self._load_1.thumbnail((self._width, self._height), Image.ANTIALIAS)
+            self._load_2 = Image.open(os.path.join(load_path, "srt_loading_2.png"))
+            self._load_2.thumbnail((self._width, self._height), Image.ANTIALIAS)
+            self._load_3 = Image.open(os.path.join(load_path, "srt_loading_3.png"))
+            self._load_3.thumbnail((self._width, self._height), Image.ANTIALIAS)
+            self._load_4 = Image.open(os.path.join(load_path, "srt_loading_4.png"))
+            self._load_4.thumbnail((self._width, self._height), Image.ANTIALIAS)
 
-            self.load_1_weighted = load_1.copy()
-            self.load_2_weighted = load_2.copy()
-            self.load_3_weighted = load_3.copy()
-            self.load_4_weighted = load_4.copy()
+            self._load_1_weighted = self._load_1.copy()
+            self._load_2_weighted = self._load_2.copy()
+            self._load_3_weighted = self._load_3.copy()
+            self._load_4_weighted = self._load_4.copy()
 
             self._frames = []
             self._frame_num = 0
@@ -188,10 +188,10 @@ class SynackLoadAnimationControl(Control):
             self.load_3_weighted.putalpha(load_3_alpha)
             self.load_4_weighted.putalpha(load_4_alpha)
 
-            composite = Image.composite(self.load_1_weighted, self.bkg, self.load_1)
-            composite = Image.composite(self.load_2_weighted, composite, self.load_2)
-            composite = Image.composite(self.load_3_weighted, composite, self.load_3)
-            composite = Image.composite(self.load_4_weighted, composite, self.load_4)
+            composite = Image.composite(self._load_1_weighted, self.bkg, self._load_1)
+            composite = Image.composite(self._load_2_weighted, composite, self._load_2)
+            composite = Image.composite(self._load_3_weighted, composite, self._load_3)
+            composite = Image.composite(self._load_4_weighted, composite, self._load_4)
             composite = Image.alpha_composite(bkg, composite)
 
             self._frames += [composite.convert("RGB")]
