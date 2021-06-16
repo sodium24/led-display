@@ -26,6 +26,10 @@ It will be provided as a swag gift for some exceptional [Synack Red Team](https:
 ![Menu](docs/swag2.jpg)
 ![Snake Game](docs/swag3.jpg)
 
+## Web Interface (WIP)
+
+![Web Interface](docs/web_interface_wip.png)
+
 ## Pairing a Wireless Joystick
 
 See [Pairing a Wireless Joystick](docs/pairing_wireless_joystick.md) for detailed instructions on how to pair your joystick to the display.
