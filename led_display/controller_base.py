@@ -67,6 +67,27 @@ class ControllerBase(object):
         """
         return self.main_app().get_state()
 
+    def get_screen_order(self):
+        """
+        Controller function to retrieve screen order
+        """
+        return self.main_app().screen_order
+
+    def set_screen_order(self, screen_order):
+        """
+        Controller function to set screen order
+        """
+        self.main_app().screen_order = screen_order
+        return True
+
+    def save_screen_order(self, screen_order):
+        """
+        Controller function to set and save screen order
+        """
+        self.main_app().screen_order = screen_order
+        self.main_app().save_screen_order(self.main_app().config_directory, screen_order)
+        return True
+
     def get_config(self):
         """
         Controller function to retrieve configuration
@@ -81,26 +102,13 @@ class ControllerBase(object):
         self.main_app().reload_running_app()
         return True
 
-    def get_screen_order(self):
-        """
-        Controller function to retrieve screen order
-        """
-        return self.main_app().screen_order
-
-    def set_config(self, screen_order):
-        """
-        Controller function to set configuration
-        """
-        self.main_app().screen_order = screen_order
-        return True
-
     def save_config(self, config):
         """
         Controller function to set and save configuration
         """
         self.main_app().config = config
         self.main_app().reload_running_app()
-        self.main_app().save_config()
+        self.main_app().save_system_config(self.main_app().config_directory, config)
         return True
 
     def send_input_event(self, input_event):

@@ -74,6 +74,12 @@ class ControllerClient(object):
         """
         return self.send_sync_command("set_screen_order", {"screen_order": screen_order})
 
+    def save_screen_order(self, screen_order):
+        """
+        Set and save screen order list
+        """
+        return self.send_sync_command("save_screen_order", {"screen_order": screen_order})
+
     def get_config(self):
         """
         Retrieve configuration

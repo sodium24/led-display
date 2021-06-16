@@ -63,6 +63,7 @@ class ControllerServer(ControllerBase):
             "get_state": self.on_get_state,
             "get_screen_order": self.on_get_screen_order,
             "set_screen_order": self.on_set_screen_order,
+            "save_screen_order": self.on_save_screen_order,
             "get_config": self.on_get_config,
             "set_config": self.on_set_config,
             "save_config": self.on_save_config,
@@ -116,6 +117,13 @@ class ControllerServer(ControllerBase):
         Handle a set screen order request from the client
         """
         self.set_screen_order(data["screen_order"])
+        return {}
+
+    def on_save_screen_order(self, data):
+        """
+        Handle a save screen order request from the client
+        """
+        self.save_screen_order(data["screen_order"])
         return {}
 
     def on_get_config(self, data):

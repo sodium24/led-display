@@ -85,26 +85,21 @@ class MainApp(AppBase):
             controller.start()
             self.controllers += [controller]
 
+    def save_screen_order(self, config_directory, screen_order):
+        """
+        Save an updated screen order list to the filesystem
+        """
+        screen_order_path = os.path.join(config_directory, "screen_order.txt")
+        screen_order_list = []
+        with open(screen_order_path, "w") as f:
+            for line in screen_order:
+                f.writeline(line)
+
     def get_state(self):
         """
         Retrieve the current app state
         """
         return {"screenIndex": self.current_screen_index, "screenName": self.current_screen_name}
-
-    def save_config(self):
-        """
-        Save an updated configuration [TODO: this references the wrong file!]
-        """
-        try:
-            os.unlink(self.json_file + ".bak")
-        except Exception:
-            pass
-        try:
-            os.rename(self.json_file, self.json_file + ".bak")
-        except Exception:
-            pass
-        with open(self.json_file, "w") as f:
-            f.write(json.dumps(self.config, indent=4))
 
     def on_input_event(self, input_event):
         """

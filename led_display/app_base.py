@@ -81,6 +81,15 @@ class AppBase(object):
             system_config = json.loads(f.read())
         return system_config
 
+    def save_system_config(self, config_directory, system_config):
+        """
+        Save the system configuration to the JSON config file "$LED_DISPLAY_CONFIG/system.json"
+        """
+        system_json_path = os.path.join(config_directory, "system.json")
+        with open(system_json_path, "w") as f:
+            system_config = f.write(json.dumps(system_config, indent=4))
+        return system_config
+
     def enumerate_screen_names(self, config_directory):
         """
         Enumerate the configured app screen names from "$LED_DISPLAY_CONFIG/apps"

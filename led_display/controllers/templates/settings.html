@@ -14,6 +14,7 @@
     <div>
         <button onclick="do_get_screen_order()">Reload</button>
         <button onclick="do_set_screen_order()">Apply</button>
+        <button onclick="do_save_screen_order()">Save</button>
     </div>
     <script>
         var config = {};
@@ -38,6 +39,20 @@
                 }
             }).fail(function() {
                 console.error("Could not apply screen order!");
+            });
+        };
+        function do_save_screen_order() {
+            $.ajax({
+                url: "/api/save_screen_order",
+                type:"POST",
+                data: JSON.stringify({"screen_order": JSON.parse($("#current-screen-order")[0].value)}),
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: function() {
+                    console.log("Screen order saved!");
+                }
+            }).fail(function() {
+                console.error("Could not save screen order!");
             });
         };
         function do_get_config() {
