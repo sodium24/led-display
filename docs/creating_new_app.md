@@ -41,11 +41,11 @@ from .apps.hello_world import HelloWorld
 ```python
 apps = {
     "off": DisplayOff,
-    "imageDisplay": ImageDisplay,
+    "image_display": ImageDisplay,
     "slideshow": Slideshow,
     "menu": Menu,
     "snake": SnakeGame,
-    "helloWorld": HelloWorld,
+    "hello_world": HelloWorld,
 }
 ```
 
@@ -57,7 +57,7 @@ $ nano synack_config/apps/hello_world.json
 
 ```json
 {
-    "app": "helloWorld",
+    "app": "hello_world",
     "config": {}
 }
 ```

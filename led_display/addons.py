@@ -42,11 +42,11 @@ from .controllers.web_controller import WebController
 
 apps = {
     "off": DisplayOff,
-    "imageDisplay": ImageDisplay,
+    "image_display": ImageDisplay,
     "slideshow": Slideshow,
     "menu": Menu,
     "snake": SnakeGame,
-    "synackLoading": SynackLoading,
+    "synack_loading": SynackLoading,
 }
 
 # List of installed controllers
