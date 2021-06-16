@@ -114,16 +114,26 @@ class AppBase(object):
         except Exception as err:
             raise Exception("Exception reading app config for screen_name=\"%s\": %s" % (screen_name, err))
 
-    def load_font(self, font_name):
+    def load_font(self, font_name, outline=False):
         """
         Load a font by name, as specified in "$LED_DISPLAY_CONFIG/system.json"
         """
-        if font_name not in self.loaded_fonts:
-            self.loaded_fonts[font_name] = graphics.Font()
-            self.loaded_fonts[font_name].LoadFont(self.config["fonts"][font_name]["path"])
-            if self.config["fonts"][font_name].get("outline"):
-                self.loaded_fonts[font_name] = self.loaded_fonts[font_name].CreateOutlineFont()
-        return self.loaded_fonts[font_name]
+        if (font_name, False) not in self.loaded_fonts:
+            for path in self.config["fonts"]["paths"]:
+                font_path = os.path.join(path, font_name + ".bdf")
+                if os.path.exists(font_path):
+                    self.loaded_fonts[(font_name, False)] = graphics.Font()
+                    self.loaded_fonts[(font_name, False)].LoadFont(font_path)
+
+        if outline:
+            if (font_name, True) not in self.loaded_fonts:
+                self.loaded_fonts[(font_name, True)] = self.loaded_fonts[(font_name, False)].CreateOutlineFont()
+
+            font = self.loaded_fonts[(font_name, True)]
+        else:
+            font = self.loaded_fonts[(font_name, False)]
+
+        return font
 
     def create_control(self, control_type, control_id):
         """
