@@ -129,11 +129,7 @@ class AppBase(object):
             if (font_name, True) not in self.loaded_fonts:
                 self.loaded_fonts[(font_name, True)] = self.loaded_fonts[(font_name, False)].CreateOutlineFont()
 
-            font = self.loaded_fonts[(font_name, True)]
-        else:
-            font = self.loaded_fonts[(font_name, False)]
-
-        return font
+        return self.loaded_fonts[(font_name, outline)]
 
     def create_control(self, control_type, control_id):
         """
