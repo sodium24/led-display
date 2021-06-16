@@ -165,13 +165,19 @@ class WebController(ControllerBase):
         ip = self.config["settings"].get("webInterfaceIp", "0.0.0.0")
         port = self.config["settings"].get("webInterfacePort", 8080)
         debug = self.config["settings"].get("webInterfaceDebug", True)
-        self.process = Process(target=web_process, args=(ip,port,debug))
-        self.process.start()
+        enable = self.config["settings"].get("webInterfaceEnable", True)
+        if enable:
+            self.process = Process(target=web_process, args=(ip,port,debug))
+            self.process.start()
+        else:
+            self.process = None
 
     def stop(self):
         """
         Stop the website interface
         """
-        self.process.terminate()
-        self.process.join()
+        if self.process is not None:
+            self.process.terminate()
+            self.process.join()
+            self.process = None
 

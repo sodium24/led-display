@@ -19,6 +19,7 @@
         "webInterfaceIp": "0.0.0.0",
         "webInterfacePort": 80,
         "webInterfaceDebug": true,
+        "webInterfaceEnable": true,
         "displayOffAfterBoot": false,
         "loadScreenApp": "synack_loading"
     },
