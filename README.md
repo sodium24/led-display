@@ -28,7 +28,7 @@ It will be provided as a swag gift for some exceptional [Synack Red Team](https:
 
 ## Web Interface (WIP)
 
-![Web Interface](docs/web_interface_wip.png)
+<img src="docs/web_interface_wip.png" height="400">
 
 ## Pairing a Wireless Joystick
 
