@@ -85,6 +85,8 @@ class ControllerServer(ControllerBase):
                     StreamMessage.send(response, conn)
                 except KeyError as err:
                     print("Command not found: %s" % err)
+                except Exception as err:
+                    print("Exception while handling message: %s" % err)
             conn.close()
 
     def stop(self):
