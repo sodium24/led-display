@@ -45,6 +45,17 @@ def web_process(ip, port, debug):
 
     controller = ControllerClient()
 
+    @app.route("/api/get_screen_order", methods=["GET"])
+    def get_config():
+        result = controller.get_screen_order()
+
+        response = app.response_class(
+            response=json.dumps(result),
+            status=200,
+            mimetype='application/json'
+        )
+        return response
+
     @app.route("/api/get_config", methods=["GET"])
     def get_config():
         result = controller.get_config()

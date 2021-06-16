@@ -3,21 +3,32 @@
 {% block content %}
     <h1>{% block title %} {{ title }} {% endblock %}</h1>
     <div><b>Current Screen:</b> <span id="screen-num">loading</span>/<span id="screen-total">loading</span> <b>Name:</b> <span id="screen-name">loading...</span></div>
-    <div><b>Input Controls:</b>
+    <div><b>Input Controls:</b></div>
+    <div>
         <button onclick="send_input_event('left')">&larr;</button>
         <button onclick="send_input_event('up')">&uarr;</button>
         <button onclick="send_input_event('down')">&darr;</button>
-        <button onclick="send_input_event('right')" style="margin-right:20px">&rarr;</button>
+        <button onclick="send_input_event('right')">&rarr;</button>
+    </div>
+    <div>
         <button onclick="send_input_event('select')">select</button>
         <button onclick="send_input_event('pause')">pause</button>
         <button onclick="send_input_event('exit')">exit</button>
     </div>
     <script>
         var config = {};
+        var screen_order = [];
+        function do_get_screen_order() {
+            $.get("/api/get_screen_order", function(data) {
+                screen_order = data.screen_order;
+                $("#screen-total").text(screen_order.length);
+            }).fail(function() {
+                setTimeout(do_get_screen_order, 1000);
+            });
+        };
         function do_get_config() {
             $.get("/api/get_config", function(data) {
                 config = data.config;
-                $("#screen-total").text(config.screenOrder.length);
             }).fail(function() {
                 setTimeout(do_get_config, 1000);
             });

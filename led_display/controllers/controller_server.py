@@ -61,6 +61,8 @@ class ControllerServer(ControllerBase):
             "joystick_release": self.on_joystick_release,
             "joystick_axis": self.on_joystick_axis,
             "get_state": self.on_get_state,
+            "get_screen_order": self.on_get_screen_order,
+            "set_screen_order": self.on_set_screen_order,
             "get_config": self.on_get_config,
             "set_config": self.on_set_config,
             "save_config": self.on_save_config,
@@ -102,6 +104,19 @@ class ControllerServer(ControllerBase):
         Handle an app state request from the client
         """
         return self.get_state()
+
+    def on_get_screen_order(self, data):
+        """
+        Handle a retrieve screen order request from the client
+        """
+        return {"screen_order": self.get_screen_order()}
+
+    def on_set_screen_order(self, data):
+        """
+        Handle a set screen order request from the client
+        """
+        self.set_screen_order(data["screen_order"])
+        return {}
 
     def on_get_config(self, data):
         """

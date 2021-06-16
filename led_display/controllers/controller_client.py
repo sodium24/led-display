@@ -62,6 +62,18 @@ class ControllerClient(object):
         """
         return self.send_sync_command("get_state", {})
 
+    def get_screen_order(self):
+        """
+        Retrieve screen order list
+        """
+        return self.send_sync_command("get_screen_order", {})
+
+    def set_screen_order(self, screen_order):
+        """
+        Set screen order list
+        """
+        return self.send_sync_command("set_screen_order", {"screen_order": screen_order})
+
     def get_config(self):
         """
         Retrieve configuration

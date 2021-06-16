@@ -242,6 +242,9 @@ class MainApp(AppBase):
             time.sleep(1)
 
     def app_kill_thread(self, timeout):
+        """
+        Kill a running app after a timeout
+        """
         time.sleep(timeout)
         self.stop_running_app()
 
@@ -249,12 +252,11 @@ class MainApp(AppBase):
         """
         Main routine to start up child apps as needed
         """
-
         load_screen_app = self.config["settings"].get("loadScreenApp", "")
 
         if len(load_screen_app) > 0:
             # Show the load screen for 10 seconds
-            load_screen_kill = threading.Thread(target=self.app_kill_thread,args=(10.0,))
+            load_screen_kill = threading.Thread(target=self.app_kill_thread,args=(30.0,))
             load_screen_kill.daemon = True
             load_screen_kill.start()
 
