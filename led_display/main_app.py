@@ -90,10 +90,8 @@ class MainApp(AppBase):
         Save an updated screen order list to the filesystem
         """
         screen_order_path = os.path.join(config_directory, "screen_order.txt")
-        screen_order_list = []
         with open(screen_order_path, "w") as f:
-            for line in screen_order:
-                f.writeline(line)
+            f.writelines(screen_order)
 
     def get_state(self):
         """
