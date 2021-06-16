@@ -124,6 +124,7 @@ class AppBase(object):
                 if os.path.exists(font_path):
                     self.loaded_fonts[(font_name, False)] = graphics.Font()
                     self.loaded_fonts[(font_name, False)].LoadFont(font_path)
+                    break
 
         if outline:
             if (font_name, True) not in self.loaded_fonts:
