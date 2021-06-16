@@ -2,15 +2,44 @@
 
 {% block content %}
     <h1>{% block title %} {{ title }} {% endblock %}</h1>
-    <div><b>Current Configuration:</b></div>
-    <textarea id="current-config" rows="50" cols="80"></textarea>
+    <div><b>System Configuration:</b></div>
+    <textarea id="current-config" rows="20" cols="80"></textarea>
     <div>
         <button onclick="do_get_config()">Reload</button>
         <button onclick="do_set_config()">Apply</button>
         <button onclick="do_save_config()">Save</button>
     </div>
+    <div><b>Screen Order:</b></div>
+    <textarea id="current-screen-order" rows="20" cols="80"></textarea>
+    <div>
+        <button onclick="do_get_screen_order()">Reload</button>
+        <button onclick="do_set_screen_order()">Apply</button>
+    </div>
     <script>
         var config = {};
+        var screen_order = [];
+        function do_get_screen_order() {
+            $.get("/api/get_screen_order", function(data) {
+                screen_order = data.screen_order;
+                $("#current-screen-order")[0].value = JSON.stringify(screen_order, null, 4);
+            }).fail(function() {
+                setTimeout(do_get_screen_order, 1000);
+            });
+        };
+        function do_set_screen_order() {
+            $.ajax({
+                url: "/api/set_screen_order",
+                type:"POST",
+                data: JSON.stringify({"screen_order": JSON.parse($("#current-screen-order")[0].value)}),
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: function() {
+                    console.log("Screen order applied!");
+                }
+            }).fail(function() {
+                console.error("Could not apply screen order!");
+            });
+        };
         function do_get_config() {
             $.get("/api/get_config", function(data) {
                 config = data.config;
@@ -47,6 +76,7 @@
                 console.error("Could not save configuration!");
             });
         };
+        do_get_screen_order();
         do_get_config();
     </script>
 {% endblock %}

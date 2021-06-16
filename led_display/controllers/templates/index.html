@@ -3,14 +3,14 @@
 {% block content %}
     <h1>{% block title %} {{ title }} {% endblock %}</h1>
     <div><b>Current Screen:</b> <span id="screen-num">loading</span>/<span id="screen-total">loading</span> <b>Name:</b> <span id="screen-name">loading...</span></div>
-    <div><b>Input Controls:</b></div>
-    <div>
+    <div style="margin-bottom: 5px"><b>Input Controls:</b></div>
+    <div style="margin-bottom: 5px">
         <button onclick="send_input_event('left')">&larr;</button>
         <button onclick="send_input_event('up')">&uarr;</button>
         <button onclick="send_input_event('down')">&darr;</button>
         <button onclick="send_input_event('right')">&rarr;</button>
     </div>
-    <div>
+    <div style="margin-bottom: 5px">
         <button onclick="send_input_event('select')">select</button>
         <button onclick="send_input_event('pause')">pause</button>
         <button onclick="send_input_event('exit')">exit</button>
@@ -52,6 +52,7 @@
                 success: function() {}
             });
         };
+        do_get_screen_order();
         do_get_config();
         do_update_state();
     </script>
