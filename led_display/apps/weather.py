@@ -174,10 +174,10 @@ class Weather(AppBase):
                     with open("/tmp/weather_icon.png", "wb") as f:
                         f.write(icon_image)
 
-                image_control.filename = ""
-                
-                if os.path.exists("/tmp/weather_icon.png"):
-                    image_control.filename = "/tmp/weather_icon.png"
+                    image_control.filename = ""
+                    
+                    if os.path.exists("/tmp/weather_icon.png"):
+                        image_control.filename = "/tmp/weather_icon.png"
 
                 if temperature is not None:
                     if units == "metric":
