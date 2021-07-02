@@ -41,7 +41,7 @@ class Lamp(AppBase):
         """
         Main routine to display a color
         """
-        lamp_control = self.create_control("fill", "fill_" + str(i))
+        lamp_control = self.create_control("fill", "fill_0")
         lamp_control.color = self.app_config["color"]
 
         # update the display buffer with image data from the controls
