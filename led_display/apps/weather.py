@@ -63,11 +63,11 @@ class Weather(AppBase):
         image_control.height = self.offscreen_canvas.height
 
         temp_control = self.create_control("text", "text_temperature")
-        temp_control.font = "6x9"
+        temp_control.font = "7x13"
         temp_control.color = [255, 255, 255]
         temp_control.text = ""
         temp_control.x = self.offscreen_canvas.width/2
-        temp_control.y = 10
+        temp_control.y = 15
         temp_control.align = "center"
         temp_control.scroll = "none"
 
@@ -76,7 +76,7 @@ class Weather(AppBase):
         weather_control.color = [255, 255, 255]
         weather_control.text = ""
         weather_control.x = self.offscreen_canvas.width/2
-        weather_control.y = self.offscreen_canvas.height-2
+        weather_control.y = self.offscreen_canvas.height-5
         weather_control.align = "center"
         weather_control.scroll = "auto"
 
