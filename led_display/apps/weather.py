@@ -80,7 +80,7 @@ class Weather(AppBase):
         weather_control.align = "center"
         weather_control.scroll = "auto"
 
-        loading_control = self.create_control("text", "text_weather")
+        loading_control = self.create_control("text", "text_loading")
         loading_control.font = "6x9"
         loading_control.color = [255, 255, 255]
         loading_control.text = "loading..."
