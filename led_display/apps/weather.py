@@ -84,7 +84,7 @@ class Weather(AppBase):
             if "latitude" in self.app_config and "longitude" in self.app_config:
                 latitude = self.app_config["latitude"]
                 longitude = self.app_config["longitude"]
-            else:
+            if latitude is None and longitude is None:
                 try:
                     ip_info = requests.get("https://ipapi.co/json/").json()
                     latitude = ip_info["latitude"]
