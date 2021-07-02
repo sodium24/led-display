@@ -146,43 +146,51 @@ class Weather(AppBase):
                 print("Cannot retrieve weather")
                 return
 
-            cache["weather_data"] = weather_data
+            if needs_refresh:
 
-            temperature = weather_data.get("current", {}).get("temp")
-            current_weather = weather_data.get("current", {}).get("weather", [])
+                cache["weather_data"] = weather_data
 
-            if len(current_weather) > 0:
-                weather_main = current_weather[0]["main"]
-                weather_description = current_weather[0]["description"]
-                weather_icon_url = current_weather[0]["icon"]
+                temperature = weather_data.get("current", {}).get("temp")
+                current_weather = weather_data.get("current", {}).get("weather", [])
+
+                print("temperature: %f" % temperature)
+
+                if len(current_weather) > 0:
+                    print("weather: %s" % current_weather[0])
+                    weather_main = current_weather[0]["main"]
+                    weather_description = current_weather[0]["description"]
+                    weather_icon_url = current_weather[0]["icon"]
 
                 if weather_icon_url is not None:
                     weather_icon_url = "https://openweathermap.org/img/wn/%s@2x.png" % weather_icon_url
+                    print("icon: %s" % weather_icon_url)
 
-            if needs_refresh and weather_icon_url is not None:
-                icon_image = requests.get(weather_icon_url).content
+                if weather_icon_url is not None:
+                    icon_image = requests.get(weather_icon_url).content
 
-                with open("/tmp/weather_icon.png", "wb") as f:
-                    f.write(icon_image)
-            
-            if os.path.exists("/tmp/weather_icon.png"):
-                image_control.filename = "/tmp/weather_icon.png"
+                    with open("/tmp/weather_icon.png", "wb") as f:
+                        f.write(icon_image)
 
-            if temperature is not None:
-                if units == "metric":
-                    temp_control.text = "%d C" % int(round(temperature))
+                image_control.filename = ""
+                
+                if os.path.exists("/tmp/weather_icon.png"):
+                    image_control.filename = "/tmp/weather_icon.png"
+
+                if temperature is not None:
+                    if units == "metric":
+                        temp_control.text = "%d C" % int(round(temperature))
+                    else:
+                        temp_control.text = "%d F" % int(round(temperature))
+
+                if weather_main is not None:
+                    weather_control.text = weather_main
+
+                if weather_control.static:
+                    update_rate = 1.0
                 else:
-                    temp_control.text = "%d F" % int(round(temperature))
+                    update_rate = 0.1
 
-            if weather_main is not None:
-                weather_control.text = weather_main
-
-            if weather_control.static:
-                update_rate = 1.0
-            else:
-                update_rate = 0.1
-
-            loading_control.enabled = False
+                loading_control.enabled = False
 
             # update the display buffer with image data from the controls
             self.update()
