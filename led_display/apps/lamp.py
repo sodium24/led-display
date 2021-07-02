@@ -1,7 +1,7 @@
 ################################################################################
-# addons.py
+# lamp.py
 #-------------------------------------------------------------------------------
-# Extensions for adding apps and controllers.
+# An app to act as a lamp.
 # 
 # By Malcolm Stagg
 #
@@ -27,34 +27,28 @@
 #
 ################################################################################
 
-from .apps.off import DisplayOff
-from .apps.image_display import ImageDisplay
-from .apps.slideshow import Slideshow
-from .apps.menu import Menu
-from .apps.snake import SnakeGame
-from .apps.lamp import Lamp
-from .apps.synack_loading import SynackLoading
+import time
+import datetime
+import os
 
-from .controllers.controller_server import ControllerServer
-from .controllers.joystick_controller import JoystickController
-from .controllers.web_controller import WebController
+from ..app_base import AppBase
 
-# List of installed apps
+class Lamp(AppBase):
+    """
+    App to act as a lamp
+    """
+    def run(self):
+        """
+        Main routine to display a color
+        """
+        lamp_control = self.create_control("fill", "fill_" + str(i))
+        lamp_control.color = self.app_config["color"]
 
-apps = {
-    "off": DisplayOff,
-    "image_display": ImageDisplay,
-    "slideshow": Slideshow,
-    "menu": Menu,
-    "snake": SnakeGame,
-    "lamp": Lamp,
-    "synack_loading": SynackLoading,
-}
+        # update the display buffer with image data from the controls
+        self.update()
 
-# List of installed controllers
+        # redraw the display
+        self.draw()
 
-controllers = {
-    "tcp": ControllerServer,
-    "joystick": JoystickController,
-    "web": WebController
-}
+        # wait for exit
+        self.stop_event.wait()

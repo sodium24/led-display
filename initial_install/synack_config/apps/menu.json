@@ -16,6 +16,10 @@
                 "screen": "snake"
             },
             {
+                "text": "LAMP",
+                "screen": "lamp"
+            },
+            {
                 "text": "TURN OFF",
                 "screen": "turn_off"
             }
