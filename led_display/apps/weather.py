@@ -102,7 +102,7 @@ class Weather(AppBase):
 
         cache["lat_lon"] = [latitude, longitude]
 
-        update_rate = 15.0
+        update_rate = 0.1
 
         while not self.stop_event.wait(update_rate):
             needs_refresh = False
@@ -117,11 +117,13 @@ class Weather(AppBase):
 
             if needs_refresh:
                 try:
+                    print("Retrieving weather data for (%f, %f)" % (latitude, longitude))
                     weather_data = requests.get("https://openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&units=%s&appid=439d4b804bc8187953eb36d2a8c26a02" % (latitude, longitude, units)).json()
                 except Exception as err:
                     print("Hit exception: %s" % err)
                     pass
                 cache["last_refresh"] = time.time()
+                print("Weather data: %s" % weather_data)
             else:
                 weather_data = cache.get("weather_data")
 
@@ -161,7 +163,7 @@ class Weather(AppBase):
                 weather_control.text = weather_main
 
             if weather_control.static:
-                update_rate = 15.0
+                update_rate = 1.0
             else:
                 update_rate = 0.1
 
