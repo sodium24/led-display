@@ -128,7 +128,7 @@ class Weather(AppBase):
                 needs_refresh = True
             else:
                 if "weather_data" in cache:
-                    if not first_load:
+                    if not needs_redraw:
                         needs_refresh = (time.time() - cache["last_refresh"]) > 60.0
                 else:
                     needs_refresh = (time.time() - cache["last_refresh"]) > 30.0
