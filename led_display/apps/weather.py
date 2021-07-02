@@ -76,9 +76,9 @@ class Weather(AppBase):
         weather_control.color = [255, 255, 255]
         weather_control.text = ""
         weather_control.x = self.offscreen_canvas.width/2
-        weather_control.y = self.offscreen_canvas.height-1
+        weather_control.y = self.offscreen_canvas.height-2
         weather_control.align = "center"
-        weather_control.scroll = "none"
+        weather_control.scroll = "auto"
 
         if "lat_lon" not in cache:
             if "latitude" in self.app_config and "longitude" in self.app_config:
@@ -102,7 +102,9 @@ class Weather(AppBase):
 
         cache["lat_lon"] = [latitude, longitude]
 
-        while not self.stop_event.wait(15.0):
+        update_rate = 15.0
+
+        while not self.stop_event.wait(update_rate):
             needs_refresh = False
 
             if "last_refresh" not in cache:
@@ -157,6 +159,11 @@ class Weather(AppBase):
 
             if weather_main is not None:
                 weather_control.text = weather_main
+
+            if weather_control.static:
+                update_rate = 15.0
+            else:
+                update_rate = 0.1
 
             # update the display buffer with image data from the controls
             self.update()
