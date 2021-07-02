@@ -340,7 +340,7 @@ class ImageControl(Control):
         """
         if self._filename != "" and self._width != 0 and self._height != 0:
             image = Image.open(self._filename)
-            image.thumbnail((self._width, self._height), Image.ANTIALIAS)
+            image.thumbnail((self._width, self._height), Image.BICUBIC)
             self._image = image.convert('RGB')
 
     def draw(self, canvas):
