@@ -119,6 +119,7 @@ class Weather(AppBase):
 
         update_rate = 0.0
         needs_redraw = True
+        first_load = True
 
         while not self.stop_event.wait(update_rate):
             needs_refresh = False
@@ -127,7 +128,7 @@ class Weather(AppBase):
                 needs_refresh = True
             else:
                 if "weather_data" in cache:
-                    if not needs_redraw:
+                    if not first_load:
                         needs_refresh = (time.time() - cache["last_refresh"]) > 60.0
                 else:
                     needs_refresh = (time.time() - cache["last_refresh"]) > 30.0
@@ -174,6 +175,7 @@ class Weather(AppBase):
                     with open("/tmp/weather_icon.png", "wb") as f:
                         f.write(icon_image)
 
+                if not first_load:
                     image_control.filename = ""
                     
                     if os.path.exists("/tmp/weather_icon.png"):
@@ -201,5 +203,11 @@ class Weather(AppBase):
             # redraw the display
             self.draw()
 
-            needs_redraw = False
+            if not first_load:
+                needs_redraw = False
+            else:
+                needs_redraw = True
+                update_rate = 0.0
+
+            first_load = False
 
