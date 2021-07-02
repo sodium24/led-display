@@ -178,9 +178,9 @@ class Weather(AppBase):
 
                 if temperature is not None:
                     if units == "metric":
-                        temp_control.text = "%d C" % int(round(temperature))
+                        temp_control.text = u"%d\u00b0C" % int(round(temperature))
                     else:
-                        temp_control.text = "%d F" % int(round(temperature))
+                        temp_control.text = u"%d\u00b0F" % int(round(temperature))
 
                 if weather_main is not None:
                     weather_control.text = weather_main
