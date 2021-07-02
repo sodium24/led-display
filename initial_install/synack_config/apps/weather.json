@@ -1,0 +1,8 @@
+{
+    "app": "weather",
+    "config": {
+        "units": "imperial",
+        "latitude": null,
+        "longitude": null
+    }
+}
