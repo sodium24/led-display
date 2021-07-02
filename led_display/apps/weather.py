@@ -80,6 +80,21 @@ class Weather(AppBase):
         weather_control.align = "center"
         weather_control.scroll = "auto"
 
+        loading_control = self.create_control("text", "text_weather")
+        loading_control.font = "6x9"
+        loading_control.color = [255, 255, 255]
+        loading_control.text = "loading..."
+        loading_control.x = self.offscreen_canvas.width/2
+        loading_control.y = self.offscreen_canvas.height/2
+        loading_control.align = "center"
+        loading_control.scroll = "auto"
+
+        # update the display buffer with image data from the controls
+        self.update()
+
+        # redraw the display
+        self.draw()
+
         if "lat_lon" not in cache:
             if "latitude" in self.app_config and "longitude" in self.app_config:
                 latitude = self.app_config["latitude"]
@@ -166,6 +181,8 @@ class Weather(AppBase):
                 update_rate = 1.0
             else:
                 update_rate = 0.1
+
+            loading_control.enable = false
 
             # update the display buffer with image data from the controls
             self.update()
