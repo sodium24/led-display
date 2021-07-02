@@ -182,7 +182,7 @@ class Weather(AppBase):
             else:
                 update_rate = 0.1
 
-            loading_control.enable = False
+            loading_control.enabled = False
 
             # update the display buffer with image data from the controls
             self.update()
