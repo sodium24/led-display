@@ -117,7 +117,7 @@ class Weather(AppBase):
 
         cache["lat_lon"] = [latitude, longitude]
 
-        update_rate = 0.1
+        update_rate = 0.0
         needs_redraw = True
 
         while not self.stop_event.wait(update_rate):
@@ -127,7 +127,8 @@ class Weather(AppBase):
                 needs_refresh = True
             else:
                 if "weather_data" in cache:
-                    needs_refresh = (time.time() - cache["last_refresh"]) > 60.0
+                    if not needs_redraw:
+                        needs_refresh = (time.time() - cache["last_refresh"]) > 60.0
                 else:
                     needs_refresh = (time.time() - cache["last_refresh"]) > 30.0
 
