@@ -118,6 +118,7 @@ class Weather(AppBase):
         cache["lat_lon"] = [latitude, longitude]
 
         update_rate = 0.1
+        needs_redraw = True
 
         while not self.stop_event.wait(update_rate):
             needs_refresh = False
@@ -139,6 +140,7 @@ class Weather(AppBase):
                     pass
                 cache["last_refresh"] = time.time()
                 print("Weather data: %s" % weather_data)
+                needs_redraw = True
             else:
                 weather_data = cache.get("weather_data")
 
@@ -146,7 +148,7 @@ class Weather(AppBase):
                 print("Cannot retrieve weather")
                 return
 
-            if needs_refresh:
+            if needs_redraw:
 
                 cache["weather_data"] = weather_data
 
@@ -165,7 +167,7 @@ class Weather(AppBase):
                     weather_icon_url = "https://openweathermap.org/img/wn/%s@2x.png" % weather_icon_url
                     print("icon: %s" % weather_icon_url)
 
-                if weather_icon_url is not None:
+                if needs_refresh and weather_icon_url is not None:
                     icon_image = requests.get(weather_icon_url).content
 
                     with open("/tmp/weather_icon.png", "wb") as f:
@@ -197,4 +199,6 @@ class Weather(AppBase):
 
             # redraw the display
             self.draw()
+
+            needs_redraw = False
 
