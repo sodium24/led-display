@@ -31,6 +31,7 @@ import sys
 import json
 import threading
 import time
+import signal
 import os
 from . import addons
 from .app_base import AppBase
@@ -41,6 +42,8 @@ class MainApp(AppBase):
     Main app which runs at startup and allows other apps to be run based on user input
     """
     def __init__(self):
+        self.terminate_event = threading.Event()
+
         # Cache of loaded fonts
         self.loaded_fonts = {}
 
@@ -84,6 +87,16 @@ class MainApp(AppBase):
             controller = addons.controllers[controller_name](self.config, self)
             controller.start()
             self.controllers += [controller]
+
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+    def exit_gracefully(self, *args):
+        """
+        Catch a SIGINT or SIGTERM to exit gracefully
+        """
+        self.terminate_event.set()
+        self.stop_running_app()
 
     def save_screen_order(self, config_directory, screen_order):
         """
@@ -259,13 +272,13 @@ class MainApp(AppBase):
 
         self.matrix.Clear()
 
-        while True:
+        while not self.terminate_event.is_set():
             if not self.off_at_boot and (self.current_screen_index != self.screen_index or self.restart_app):
                 self.stop_running_app()
                 self.restart_app = False
                 self._start_app(self.screen_index)
             else:
-                time.sleep(1)
+                self.terminate_event.wait(1.0)
 
 def main():
     """

@@ -87,7 +87,7 @@ class WeatherUpdater(object):
         self.update_weather_event.set()
 
     def _do_weather_update(self):
-        while True:
+        while not self.stop_event.is_set():
             self.update_weather_event.wait()
             if self.stop_event.is_set():
                 break
