@@ -209,12 +209,6 @@ class Weather(AppBase):
         loading_control.align = "center"
         loading_control.scroll = "auto"
 
-        # update the display buffer with image data from the controls
-        self.update()
-
-        # redraw the display
-        self.draw()
-
         global weather_updater
 
         last_refresh = None
