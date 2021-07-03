@@ -31,31 +31,152 @@ import time
 import datetime
 import os
 import requests
+import threading
 
 from ..app_base import AppBase
 
-cache = {}
+weather_updater = None
+
+class WeatherUpdater(object):
+    """
+    Class to update weather information periodically
+    """
+    def init(self):
+        self.config = {
+            "latitude": None,
+            "longitude": None,
+            "units": "imperial"
+        }
+
+        self.latitude = None
+        self.longitude = None
+        self.last_refresh = None
+        self.weather_data = None
+        self.temperature = None
+        self.current_weather = None
+        self.weather_main = None
+        self.weather_description = None
+        self.self.weather_icon_type = None
+        self.weather_icon_type = None
+        self.weather_icon_url = None
+        self.weather_icon_filename = None
+
+        self.update_weather_event = threading.Event()
+        self.stop_event = threading.Event()
+
+        self._update_config()
+
+    def set_config(self, config):
+        if config != self.config:
+            self.config.update(config)
+            self._update_config()
+
+    def start(self):
+        self.weather_update_thread = threading.Thread(target=self._do_weather_update)
+        self.weather_update_thread.daemon = True
+        self.weather_update_thread.start()
+
+    def stop(self):
+        if self.weather_update_thread is not None:
+            self.stop_event.set()
+            self.update_weather_event.set()
+            self.weather_update_thread.join()
+            self.weather_update_thread = None
+
+    def update(self):
+        self.update_weather_event.set()
+
+    def _do_weather_update(self):
+        while not self.update_weather_event.wait():
+            if self.stop_event.is_set():
+                break
+
+            needs_refresh = False
+
+            if self.last_refresh is None:
+                needs_refresh = True
+            else:
+                if self.weather_data is not None:
+                    needs_refresh = (time.time() - self.last_refresh) > 60.0
+                else:
+                    needs_refresh = (time.time() - self.last_refresh) > 30.0
+
+            if needs_refresh:
+                try:
+                    print("Retrieving weather data for (%f, %f)" % (self.latitude, self.longitude))
+                    self.weather_data = requests.get("https://openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&units=%s&appid=439d4b804bc8187953eb36d2a8c26a02" % (self.latitude, self.longitude, self.units)).json()
+                except Exception as err:
+                    print("Hit exception: %s" % err)
+
+                print("Weather data: %s" % self.weather_data)
+
+                self.temperature = self.weather_data.get("current", {}).get("temp")
+                self.current_weather = self.weather_data.get("current", {}).get("weather", [])
+
+                print("temperature: %f" % self.temperature)
+
+                if len(self.current_weather) > 0:
+                    print("weather: %s" % self.current_weather[0])
+                    self.weather_main = self.current_weather[0]["main"]
+                    self.weather_description = self.current_weather[0]["description"]
+                    self.weather_icon_type = self.current_weather[0]["icon"]
+
+                if self.weather_icon_type is not None:
+                    self.weather_icon_url = "https://openweathermap.org/img/wn/%s@2x.png" % self.weather_icon_type
+                    print("icon: %s" % self.weather_icon_url)
+
+                if self.weather_icon_url is not None:
+                    icon_image = requests.get(self.weather_icon_url).content
+
+                    with open("/tmp/%s.png" % self.weather_icon_type, "wb") as f:
+                        f.write(icon_image)
+
+                    self.weather_icon_filename = "/tmp/%s.png" % self.weather_icon_type
+
+                self.last_refresh = time.time()
+
+            self.update_weather_event.clear()
+
+    def _update_config(self):
+        self.units = self.config.get("units", "imperial")
+        self._get_location()
+        self.update_weather_event.set()
+
+    def _get_location(self):
+        if self.config.get("latitude") is not None and self.config.get("longitude") is not None:
+            self.latitude = self.config["latitude"]
+            self.longitude = self.config["longitude"]
+        else:
+            try:
+                ip_info = requests.get("https://ipapi.co/json/").json()
+                self.latitude = ip_info["latitude"]
+                self.longitude = ip_info["longitude"]
+            except Exception as err:
+                print("Hit exception: %s" % err)
+                pass
+
+weather_updater = WeatherUpdater()
+weather_updater.start()
 
 class Weather(AppBase):
     """
     App to display the current weather
     """
+    def __init__(self, config, app_config, *args, **kwargs):
+        """
+        Initialize the app
+        """
+        super(Weather, self).__init__(config, app_config, *args, **kwargs)
+
+        global weather_updater
+
+        weather_updater.set_config(app_config)
+        weather_updater.update()
+
     def run(self):
         """
         Main routine to display the weather
         """
-        global cache
-
-        units = self.app_config["units"]
-
-        latitude = None
-        longitude = None
-
-        temperature = None
-        weather_main = None
-        weather_description = None
-        weather_icon_url = None
-
         image_control = self.create_control("image", "image_0")
         image_control.x = 0
         image_control.y = 0
@@ -95,107 +216,33 @@ class Weather(AppBase):
         # redraw the display
         self.draw()
 
-        if "lat_lon" not in cache:
-            if "latitude" in self.app_config and "longitude" in self.app_config:
-                latitude = self.app_config["latitude"]
-                longitude = self.app_config["longitude"]
-            if latitude is None and longitude is None:
-                try:
-                    ip_info = requests.get("https://ipapi.co/json/").json()
-                    latitude = ip_info["latitude"]
-                    longitude = ip_info["longitude"]
-                except Exception as err:
-                    print("Hit exception: %s" % err)
-                    pass
-        else:
-            latitude = cache["lat_lon"][0]
-            longitude = cache["lat_lon"][1]
+        global weather_updater
 
-        if latitude is None or longitude is None:
-            print("Unknown lat/lon, cannot continue")
-            return
-
-        cache["lat_lon"] = [latitude, longitude]
-
-        update_rate = 0.0
-        needs_redraw = True
-        first_load = True
+        last_refresh = None
+        update_rate = 0.1
 
         while not self.stop_event.wait(update_rate):
-            needs_refresh = False
+            weather_updater.update()
 
-            if "last_refresh" not in cache:
-                needs_refresh = True
-            else:
-                if "weather_data" in cache:
-                    if not needs_redraw:
-                        needs_refresh = (time.time() - cache["last_refresh"]) > 60.0
-                else:
-                    needs_refresh = (time.time() - cache["last_refresh"]) > 30.0
-
-            if needs_refresh:
-                try:
-                    print("Retrieving weather data for (%f, %f)" % (latitude, longitude))
-                    weather_data = requests.get("https://openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&units=%s&appid=439d4b804bc8187953eb36d2a8c26a02" % (latitude, longitude, units)).json()
-                except Exception as err:
-                    print("Hit exception: %s" % err)
-                    pass
-                cache["last_refresh"] = time.time()
-                print("Weather data: %s" % weather_data)
-                needs_redraw = True
-            else:
-                weather_data = cache.get("weather_data")
-
-            if weather_data is None:
-                print("Cannot retrieve weather")
-                return
-
-            if needs_redraw:
-
-                cache["weather_data"] = weather_data
-
-                temperature = weather_data.get("current", {}).get("temp")
-                current_weather = weather_data.get("current", {}).get("weather", [])
-
-                print("temperature: %f" % temperature)
-
-                if len(current_weather) > 0:
-                    print("weather: %s" % current_weather[0])
-                    weather_main = current_weather[0]["main"]
-                    weather_description = current_weather[0]["description"]
-                    weather_icon_url = current_weather[0]["icon"]
-
-                if weather_icon_url is not None:
-                    weather_icon_url = "https://openweathermap.org/img/wn/%s@2x.png" % weather_icon_url
-                    print("icon: %s" % weather_icon_url)
-
-                if needs_refresh and weather_icon_url is not None:
-                    icon_image = requests.get(weather_icon_url).content
-
-                    with open("/tmp/weather_icon.png", "wb") as f:
-                        f.write(icon_image)
-
-                if not first_load:
-                    image_control.filename = ""
-                    
-                    if os.path.exists("/tmp/weather_icon.png"):
-                        image_control.filename = "/tmp/weather_icon.png"
-
-                if temperature is not None:
-                    if units == "metric":
-                        temp_control.text = u"%d\u00b0C" % int(round(temperature))
-                    else:
-                        temp_control.text = u"%d\u00b0F" % int(round(temperature))
-
-                if weather_main is not None:
-                    weather_control.text = weather_main
-
-                if weather_control.static:
-                    update_rate = 1.0
-                else:
-                    update_rate = 0.1
-
+            if weather_updater.last_refresh != last_refresh:
                 loading_control.enabled = False
+                last_refresh = weather_updater.last_refresh
+
+                if weather_updater.weather_icon_filename is not None:
+                    if os.path.exists(weather_updater.weather_icon_filename):
+                        image_control.filename = weather_updater.weather_icon_filename
+                
+                if weather_updater.temperature is not None:
+                    if weather_updater.units == "metric":
+                        temp_control.text = u"%d\u00b0C" % int(round(weather_updater.temperature))
+                    else:
+                        temp_control.text = u"%d\u00b0F" % int(round(weather_updater.temperature))
+
+                    if weather_updater.weather_main is not None:
+                        weather_control.text = weather_updater.weather_main
+
+                if weather_updater.weather_icon_filename is not None and os.path.exists(weather_updater.weather_icon_filename):
+                    image_control.filename = weather_updater = weather_updater.weather_icon_filename
 
             # update the display buffer with image data from the controls
             self.update()
@@ -203,11 +250,8 @@ class Weather(AppBase):
             # redraw the display
             self.draw()
 
-            if not first_load:
-                needs_redraw = False
+            if weather_control.static:
+                update_rate = 1.0
             else:
-                needs_redraw = True
-                update_rate = 0.0
-
-            first_load = False
+                update_rate = 0.1
 
