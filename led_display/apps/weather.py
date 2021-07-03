@@ -121,16 +121,18 @@ class WeatherUpdater(object):
                     self.weather_icon_type = self.current_weather[0]["icon"]
 
                 if self.weather_icon_type is not None:
+                    weather_icon_filename = "/tmp/%s.png" % self.weather_icon_type
+
                     self.weather_icon_url = "https://openweathermap.org/img/wn/%s@2x.png" % self.weather_icon_type
                     print("icon: %s" % self.weather_icon_url)
 
-                if self.weather_icon_url is not None:
-                    icon_image = requests.get(self.weather_icon_url).content
+                    if not os.path.exists(weather_icon_filename):
+                        icon_image = requests.get(self.weather_icon_url).content
 
-                    with open("/tmp/%s.png" % self.weather_icon_type, "wb") as f:
-                        f.write(icon_image)
+                        with open("/tmp/%s.png" % self.weather_icon_type, "wb") as f:
+                            f.write(icon_image)
 
-                    self.weather_icon_filename = "/tmp/%s.png" % self.weather_icon_type
+                    self.weather_icon_filename = weather_icon_filename
 
                 self.last_refresh = time.time()
 
