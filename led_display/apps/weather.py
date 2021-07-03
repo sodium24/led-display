@@ -35,13 +35,11 @@ import threading
 
 from ..app_base import AppBase
 
-weather_updater = None
-
 class WeatherUpdater(object):
     """
     Class to update weather information periodically
     """
-    def init(self):
+    def __init__(self):
         self.config = {
             "latitude": None,
             "longitude": None,
@@ -56,7 +54,7 @@ class WeatherUpdater(object):
         self.current_weather = None
         self.weather_main = None
         self.weather_description = None
-        self.self.weather_icon_type = None
+        self.weather_icon_type = None
         self.weather_icon_type = None
         self.weather_icon_url = None
         self.weather_icon_filename = None
