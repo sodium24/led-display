@@ -85,7 +85,8 @@ class WeatherUpdater(object):
         self.update_weather_event.set()
 
     def _do_weather_update(self):
-        while not self.update_weather_event.wait():
+        while True:
+            self.update_weather_event.wait()
             if self.stop_event.is_set():
                 break
 
@@ -240,7 +241,7 @@ class Weather(AppBase):
                         weather_control.text = weather_updater.weather_main
 
                 if weather_updater.weather_icon_filename is not None and os.path.exists(weather_updater.weather_icon_filename):
-                    image_control.filename = weather_updater = weather_updater.weather_icon_filename
+                    image_control.filename = weather_updater.weather_icon_filename
 
             # update the display buffer with image data from the controls
             self.update()
