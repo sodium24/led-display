@@ -90,53 +90,58 @@ class WeatherUpdater(object):
             if self.stop_event.is_set():
                 break
 
-            needs_refresh = False
+            try:
+                needs_refresh = False
 
-            if self.last_refresh is None:
-                needs_refresh = True
-            else:
-                if self.weather_data is not None:
-                    needs_refresh = (time.time() - self.last_refresh) > 60.0
+                if self.last_refresh is None:
+                    needs_refresh = True
                 else:
-                    needs_refresh = (time.time() - self.last_refresh) > 30.0
+                    if self.weather_data is not None:
+                        needs_refresh = (time.time() - self.last_refresh) > 60.0
+                    else:
+                        needs_refresh = (time.time() - self.last_refresh) > 30.0
 
-            if needs_refresh:
-                try:
-                    print("Retrieving weather data for (%f, %f)" % (self.latitude, self.longitude))
-                    self.weather_data = requests.get("https://openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&units=%s&appid=439d4b804bc8187953eb36d2a8c26a02" % (self.latitude, self.longitude, self.units)).json()
-                except Exception as err:
-                    print("Hit exception: %s" % err)
+                if needs_refresh:
+                    try:
+                        print("Retrieving weather data for (%f, %f)" % (self.latitude, self.longitude))
+                        self.weather_data = requests.get("https://openweathermap.org/data/2.5/onecall?lat=%f&lon=%f&units=%s&appid=439d4b804bc8187953eb36d2a8c26a02" % (self.latitude, self.longitude, self.units)).json()
+                    except Exception as err:
+                        print("Hit exception: %s" % err)
 
-                print("Weather data: %s" % self.weather_data)
+                    print("Weather data: %s" % self.weather_data)
 
-                self.temperature = self.weather_data.get("current", {}).get("temp")
-                self.current_weather = self.weather_data.get("current", {}).get("weather", [])
+                    self.temperature = self.weather_data.get("current", {}).get("temp")
+                    self.current_weather = self.weather_data.get("current", {}).get("weather", [])
 
-                print("temperature: %f" % self.temperature)
+                    print("temperature: %f" % self.temperature)
 
-                if len(self.current_weather) > 0:
-                    print("weather: %s" % self.current_weather[0])
-                    self.weather_main = self.current_weather[0]["main"]
-                    self.weather_description = self.current_weather[0]["description"]
-                    self.weather_icon_type = self.current_weather[0]["icon"]
+                    if len(self.current_weather) > 0:
+                        print("weather: %s" % self.current_weather[0])
+                        self.weather_main = self.current_weather[0]["main"]
+                        self.weather_description = self.current_weather[0]["description"]
+                        self.weather_icon_type = self.current_weather[0]["icon"]
 
-                if self.weather_icon_type is not None:
-                    weather_icon_filename = "/tmp/%s.png" % self.weather_icon_type
+                    if self.weather_icon_type is not None:
+                        weather_icon_filename = "/tmp/%s.png" % self.weather_icon_type
 
-                    self.weather_icon_url = "https://openweathermap.org/img/wn/%s@2x.png" % self.weather_icon_type
-                    print("icon: %s" % self.weather_icon_url)
+                        self.weather_icon_url = "https://openweathermap.org/img/wn/%s@2x.png" % self.weather_icon_type
+                        print("icon: %s" % self.weather_icon_url)
 
-                    if not os.path.exists(weather_icon_filename):
-                        icon_image = requests.get(self.weather_icon_url).content
+                        if not os.path.exists(weather_icon_filename):
+                            icon_image = requests.get(self.weather_icon_url).content
 
-                        with open("/tmp/%s.png" % self.weather_icon_type, "wb") as f:
-                            f.write(icon_image)
+                            with open("/tmp/%s.png" % self.weather_icon_type, "wb") as f:
+                                f.write(icon_image)
 
-                    self.weather_icon_filename = weather_icon_filename
+                        self.weather_icon_filename = weather_icon_filename
 
-                self.last_refresh = time.time()
+                    self.last_refresh = time.time()
 
-            self.update_weather_event.clear()
+                self.update_weather_event.clear()
+
+            except Exception as err:
+                print("Hit exception: %s" % err)
+                time.sleep(5.0)
 
     def _update_config(self):
         self.units = self.config.get("units", "imperial")
