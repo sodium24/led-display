@@ -68,6 +68,8 @@ class WeatherUpdater(object):
         if config != self.config:
             self.config.update(config)
             self._update_config()
+        elif self.latitude is None or self.longitude is None:
+            self._update_config()
 
     def start(self):
         self.weather_update_thread = threading.Thread(target=self._do_weather_update)
