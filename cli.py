@@ -74,7 +74,7 @@ class LedDisplayCli(cmd.Cmd):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='CLI for LED display control')
-    parser.add_argument('--dest', default='localhost', help='Destination host name or IP')
+    parser.add_argument('--host', default='localhost', help='Host name or IP')
     args = parser.parse_args()
-    controller = ControllerClient(ip=args.dest)
+    controller = ControllerClient(ip=args.host)
     LedDisplayCli().cmdloop()
