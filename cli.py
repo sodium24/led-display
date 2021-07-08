@@ -30,7 +30,7 @@
 import argparse
 import cmd
 
-from .controller_client import ControllerClient
+from led_display.controllers.controller_client import ControllerClient
 
 controller = None
 

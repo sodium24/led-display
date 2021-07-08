@@ -79,21 +79,16 @@ class ControllerServer(ControllerBase):
 
         while not self.stop_event.is_set():
             conn, addr = self.socket.accept()
-            while True:
+            message = StreamMessage.recv(conn)
+            if message:
+                print("server", message)
                 try:
-                    message = StreamMessage.recv(conn)
-                    if message:
-                        print("server", message)
-                        try:
-                            response = self.handlers[message["type"]](message)
-                            StreamMessage.send(response, conn)
-                        except KeyError as err:
-                            print("Command not found: %s" % err)
-                        except Exception as err:
-                            print("Exception while handling message: %s" % err)
+                    response = self.handlers[message["type"]](message)
+                    StreamMessage.send(response, conn)
+                except KeyError as err:
+                    print("Command not found: %s" % err)
                 except Exception as err:
-                    print("Exception sending/receiving message: %s" % err)
-                    break
+                    print("Exception while handling message: %s" % err)
             conn.close()
 
     def stop(self):
