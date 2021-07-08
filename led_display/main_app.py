@@ -91,6 +91,8 @@ class MainApp(AppBase):
         signal.signal(signal.SIGINT, self.exit_gracefully)
         signal.signal(signal.SIGTERM, self.exit_gracefully)
 
+        self.start_app_by_id(0)
+
     def exit_gracefully(self, *args):
         """
         Catch a SIGINT or SIGTERM to exit gracefully
