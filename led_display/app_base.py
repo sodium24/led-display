@@ -240,12 +240,12 @@ class AppBase(object):
         Starts a child app running by name. This will block until the app exits.
         """
         import addons
-        app_config = self.load_app_config(self.config_directory, screen_name)
-        screen_class = addons.apps[app_config["app"]]
-        self.running_app = screen_class(self.config, app_config.get("config", {}), self.loaded_fonts, matrix=self.matrix, parent=self, config_directory=self.config_directory)
         try:
             print("Starting app for screen " + screen_name)
             print("Press CTRL-C to stop...")
+            app_config = self.load_app_config(self.config_directory, screen_name)
+            screen_class = addons.apps[app_config["app"]]
+            self.running_app = screen_class(self.config, app_config.get("config", {}), self.loaded_fonts, matrix=self.matrix, parent=self, config_directory=self.config_directory)
             self.running_app.start()
             print("Execution complete for screen " + screen_name)
         except Exception as err:
