@@ -122,9 +122,21 @@ class ControllerClient(object):
         """
         return self.send_sync_command("joystick_axis", {"axis_states": axis_states})
 
+    def start_app_by_name(self, screen_name):
+        """
+        Start an app by screen name
+        """
+        return self.send_sync_command("start_app_by_name", {"screen_name": screen_name})
+
+    def stop_app(self):
+        """
+        Stop a running app
+        """
+        return self.send_sync_command("stop_app", {})
+
     def send_sync_command(self, command_type, data):
         """
-        Send the command synchronoutsly to the server, returning a response if received
+        Send the command synchronously to the server, returning a response if received
         """
         data["type"] = command_type
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

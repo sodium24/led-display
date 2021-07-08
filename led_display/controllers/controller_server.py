@@ -67,6 +67,8 @@ class ControllerServer(ControllerBase):
             "get_config": self.on_get_config,
             "set_config": self.on_set_config,
             "save_config": self.on_save_config,
+            "start_app_by_name": self.on_start_app_by_name,
+            "stop_app": self.on_stop_app,
         }
 
     def run(self):
@@ -76,17 +78,22 @@ class ControllerServer(ControllerBase):
         self.socket.listen(1)
 
         while not self.stop_event.is_set():
-            conn, addr = self.socket.accept()            
-            message = StreamMessage.recv(conn)
-            if message:
-                print("server", message)
+            conn, addr = self.socket.accept()
+            while True:
                 try:
-                    response = self.handlers[message["type"]](message)
-                    StreamMessage.send(response, conn)
-                except KeyError as err:
-                    print("Command not found: %s" % err)
+                    message = StreamMessage.recv(conn)
+                    if message:
+                        print("server", message)
+                        try:
+                            response = self.handlers[message["type"]](message)
+                            StreamMessage.send(response, conn)
+                        except KeyError as err:
+                            print("Command not found: %s" % err)
+                        except Exception as err:
+                            print("Exception while handling message: %s" % err)
                 except Exception as err:
-                    print("Exception while handling message: %s" % err)
+                    print("Exception sending/receiving message: %s" % err)
+                    break
             conn.close()
 
     def stop(self):
@@ -175,3 +182,17 @@ class ControllerServer(ControllerBase):
         """
         handled = self.send_joystick_axis(data["axis_states"])
         return {"handled": handled}
+
+    def on_start_app_by_name(self, data):
+        """
+        Handle start app by name request
+        """
+        self.start_app_by_name(data["screen_name"])
+        return {}
+
+    def on_stop_app(self, data):
+        """
+        Handle stop app request
+        """
+        self.stop_app()
+        return {}

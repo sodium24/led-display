@@ -141,6 +141,18 @@ class ControllerBase(object):
         """
         self.main_app().enter_sleep_mode()
 
+    def start_app_by_name(self, screen_name):
+        """
+        Controller function to start an app by the screen name
+        """
+        return self.main_app()._start_app_by_name(screen_name)
+
+    def stop_app(self):
+        """
+        Controller function to stop a running app
+        """
+        return self.main_app().stop_running_app()
+
     def run(self):
         """
         Main controller run routine, to be implemented by the controller

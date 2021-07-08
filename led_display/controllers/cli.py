@@ -27,11 +27,12 @@
 #
 ################################################################################
 
+import argparse
 import cmd
 
 from .controller_client import ControllerClient
 
-controller = ControllerClient()
+controller = None
 
 class LedDisplayCli(cmd.Cmd):
     """
@@ -62,5 +63,18 @@ class LedDisplayCli(cmd.Cmd):
         'User input event: select'
         controller.send_input_event("select")
 
+    def do_start_app(self, arg):
+        'Start an app by the screen name'
+        controller.stop_app()
+        controller.start_app_by_name(arg.split(" ")[0])
+
+    def do_stop_app(self, arg):
+        'Stop a running app'
+        controller.stop_app()
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='CLI for LED display control')
+    parser.add_argument('--dest', default='localhost', help='Destination host name or IP')
+    args = parser.parse_args()
+    controller = ControllerClient(ip=args.dest)
     LedDisplayCli().cmdloop()
