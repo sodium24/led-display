@@ -145,7 +145,7 @@ class ControllerBase(object):
         """
         Controller function to start an app by the screen name
         """
-        return self.main_app()._start_app_by_name(screen_name)
+        return self.main_app().start_app_by_name(screen_name)
 
     def stop_app(self):
         """

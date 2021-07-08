@@ -127,14 +127,10 @@ class MainApp(AppBase):
 
         if not handled:
             if input_event == "right":
-                self.screen_index += 1
-                self.screen_index %= len(self.screen_order)
-                self.stop_running_app()
+                self.start_app_by_id((self.screen_index + 1) % len(self.screen_order))
                 handled = True
             elif input_event == "left":
-                self.screen_index -= 1
-                self.screen_index %= len(self.screen_order)
-                self.stop_running_app()
+                self.start_app_by_id((self.screen_index - 1) % len(self.screen_order))
                 handled = True
 
         if not handled:
@@ -218,6 +214,21 @@ class MainApp(AppBase):
         else:
             self.matrix.Clear()
 
+    def start_app_by_id(self, index):
+        """
+        Start an app based on the screen order index in "screen_order.txt"
+        """
+        self.current_screen_index = self.screen_index = index
+        screen_name = self.screen_order[self.screen_index]
+        self.start_app_by_name(screen_name)
+
+    def start_app_by_name(self, screen_name):
+        """
+        Start an app based on the screen name
+        """
+        self.screen_name = screen_name
+        self.stop_running_app()
+
     def stop_running_app(self):
         """
         Attempt to stop the current running child app
@@ -230,15 +241,6 @@ class MainApp(AppBase):
         Attempt to reload the current running child app once stopped
         """
         self.restart_app = True
-
-    def _start_app(self, index):
-        """
-        Start a new child app based on index in "screen_order.txt"
-        """
-        self.current_screen_index = self.screen_index = index
-        screen_name = self.screen_order[self.screen_index]
-        self.current_screen_name = screen_name
-        self._start_app_by_name(screen_name)
 
     def wait_for_complete(self):
         """
@@ -273,10 +275,11 @@ class MainApp(AppBase):
         self.matrix.Clear()
 
         while not self.terminate_event.is_set():
-            if not self.off_at_boot and (self.current_screen_index != self.screen_index or self.restart_app):
+            if not self.off_at_boot and (self.current_screen_name != self.screen_name or self.restart_app):
                 self.stop_running_app()
                 self.restart_app = False
-                self._start_app(self.screen_index)
+                self.current_screen_name = self.screen_name
+                self._start_app_by_name(self.screen_name)
             else:
                 self.terminate_event.wait(1.0)
 
