@@ -97,6 +97,7 @@ class ControllerServer(ControllerBase):
                         print("Exception while handling message: %s" % err)
             except Exception as err:
                 print("Exception while receiving message: %s" % err)
+                break
         conn.close()
 
     def stop(self):
