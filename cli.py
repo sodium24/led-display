@@ -77,7 +77,7 @@ class LedDisplayCli(cmd.Cmd):
 
     def do_ping(self, arg):
         'Ping the display'
-        if len(controller.check_connected()) == 0:
+        if len(controller.check_connected()) > 0:
             print("Connected")
 
     def do_start_app(self, arg):
