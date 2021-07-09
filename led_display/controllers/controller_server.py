@@ -83,6 +83,9 @@ class ControllerServer(ControllerBase):
             threading.Thread(target=self.sock_thread, args=(conn,)).start()
 
     def sock_thread(self, conn):
+        """
+        Thread to handle a connected socket
+        """
         while True:
             try:
                 message = StreamMessage.recv(conn)
@@ -90,6 +93,7 @@ class ControllerServer(ControllerBase):
                     print("server", message)
                     try:
                         response = self.handlers[message["type"]](message)
+                        response["id"] = message.get("id", 0)
                         StreamMessage.send(response, conn)
                     except KeyError as err:
                         print("Command not found: %s" % err)

@@ -49,10 +49,11 @@ class ControllerClient(object):
         Initialize the client
         """
         self.ip = ip
+        self.cmd_id = 0
 
     def check_connected(self):
         """
-        Checks if a connection exists, based on whethera result is received
+        Checks if a connection exists, based on whether a result is received
         """
         return self.send_sync_command("ping", {})
 
@@ -139,6 +140,9 @@ class ControllerClient(object):
         Send the command synchronously to the server, returning a response if received
         """
         data["type"] = command_type
+        data["id"] = self.cmd_id
+        self.cmd_id += 1
+
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((self.ip, self.PORT))
         StreamMessage.send(data, sock)

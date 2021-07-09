@@ -63,6 +63,23 @@ class LedDisplayCli(cmd.Cmd):
         'User input event: select'
         controller.send_input_event("select")
 
+    def do_get_state(self, arg):
+        'Get running app state'
+        print("State: %s" % controller.get_state())
+
+    def do_get_screen_order(self, arg):
+        'Get screen order'
+        print("Screen order: %s" % controller.get_screen_order()) 
+
+    def do_get_config(self, arg):
+        'Get config'
+        print("Config: %s" % controller.get_config()) 
+
+    def do_ping(self, arg):
+        'Ping the display'
+        if len(controller.check_connected()) == 0:
+            print("Connected")
+
     def do_start_app(self, arg):
         'Start an app by the screen name'
         controller.stop_app()
