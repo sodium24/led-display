@@ -54,13 +54,19 @@ class StreamMessage(object):
         length_buf = b''
 
         while len(length_buf) < 4:
-            length_buf += sock.recv(4 - len(length_buf))
+            recv_buf = sock.recv(4 - len(length_buf))
+            if len(recv_buf) == 0:
+                raise Exception("gracefully disconnected")
+            length_buf += recv_buf
 
         length = struct.unpack("<I", length_buf)[0]
 
         data_buf = b''
 
         while len(data_buf) < length:
-            data_buf += sock.recv(length - len(data_buf))
+            recv_buf = sock.recv(length - len(data_buf))
+            if len(recv_buf) == 0:
+                raise Exception("gracefully disconnected")
+            data_buf += recv_buf
 
         return json.loads(data_buf.decode())
